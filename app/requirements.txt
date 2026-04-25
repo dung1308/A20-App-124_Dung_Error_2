@@ -1,0 +1,28 @@
+fastapi
+uvicorn
+google-generativeai
+sentence-transformers
+faiss-cpu
+pandas
+scikit-learn
+requests
+python-dotenv
+python-json-logger
+
+# Database
+sqlalchemy>=2.0
+psycopg2-binary
+
+# Caching & Sessions
+redis
+
+# Security & Validation
+pydantic>=2.0
+pydantic-settings
+
+# Logging & Monitoring
+python-json-logger
+
+# Testing
+pytest
+pytest-asyncio
