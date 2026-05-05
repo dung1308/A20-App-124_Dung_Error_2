@@ -1,28 +1,17 @@
-fastapi
-uvicorn
-google-generativeai
-sentence-transformers
-faiss-cpu
-pandas
-scikit-learn
-requests
+fastapi>=0.110.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+python-dotenv>=1.0.0
+google-generativeai>=0.5.0
+sqlalchemy>=2.0.0
+psycopg2-binary>=2.9.0
+redis>=5.0.0
+sqlalchemy
+python-multipart
+passlib
+bcrypt
 python-dotenv
-python-json-logger
-
-# Database
-sqlalchemy>=2.0
-psycopg2-binary
-
-# Caching & Sessions
-redis
-
-# Security & Validation
-pydantic>=2.0
-pydantic-settings
-
-# Logging & Monitoring
-python-json-logger
-
-# Testing
-pytest
-pytest-asyncio
+chromadb
+pypdf
+scikit-learn

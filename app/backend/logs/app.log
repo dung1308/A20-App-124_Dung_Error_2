@@ -1,0 +1,181 @@
+2026-05-05 10:34:52 [-] services.rag_service INFO — Initializing RAGService
+2026-05-05 10:34:52 [-] services.rag_service INFO — RAGService in MOCK mode (keyword search)
+2026-05-05 10:34:52 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-05 10:34:52 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-05 10:35:16 [-] orchestrator.pipeline INFO — run_chat for user: anonymous, route pending
+2026-05-05 10:35:16 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-05 10:35:16 [-] agents.rag INFO — RAGAgent.run() — question: 'khoa hoc may tinh'
+2026-05-05 10:35:16 [-] services.llm_client WARNING — LLM retry 1: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 10:35:17 [-] services.llm_client WARNING — LLM retry 2: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 10:35:18 [-] services.llm_client WARNING — LLM retry 3: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 10:35:19 [-] services.llm_client ERROR — LLM failed after retries
+2026-05-05 10:35:19 [-] agents.rag INFO — RAGAgent operating in MOCK mode
+2026-05-05 10:35:19 [-] orchestrator.pipeline INFO — AUDIT [anonymous] judge_pass=True — Score: 1.0
+2026-05-05 10:35:19 [-] services.db_service INFO — DBService.save_audit_log() — user=anonymous, pass=True [NOT PERSISTED]
+2026-05-05 10:43:08 [-] services.rag_service INFO — Initializing RAGService
+2026-05-05 10:43:08 [-] services.rag_service INFO — RAGService in MOCK mode (keyword search)
+2026-05-05 10:43:08 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-05 10:43:08 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-05 11:08:33 [-] orchestrator.pipeline INFO — run_match for user: [EMAIL]
+2026-05-05 11:08:34 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 1.0
+2026-05-05 11:08:34 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-05 11:22:03 [-] services.rag_service INFO — Initializing RAGService
+2026-05-05 11:22:03 [-] services.rag_service INFO — RAGService in MOCK mode (keyword search)
+2026-05-05 11:22:03 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-05 11:22:03 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-05 11:22:45 [-] services.rag_service INFO — Initializing RAGService
+2026-05-05 11:22:45 [-] services.rag_service INFO — RAGService in MOCK mode (keyword search)
+2026-05-05 11:22:45 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-05 11:22:45 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-05 11:25:27 [-] services.rag_service INFO — Initializing RAGService
+2026-05-05 11:25:27 [-] services.rag_service INFO — RAGService in MOCK mode (keyword search)
+2026-05-05 11:25:27 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-05 11:25:27 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-05 11:30:33 [-] services.rag_service INFO — Initializing RAGService
+2026-05-05 11:30:33 [-] services.rag_service INFO — RAGService in MOCK mode (keyword search)
+2026-05-05 11:30:33 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-05 11:30:33 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-05 11:31:38 [-] orchestrator.pipeline INFO — run_match for user: 1
+2026-05-05 11:31:39 [-] orchestrator.pipeline INFO — AUDIT [1] judge_pass=True — Score: 1.0
+2026-05-05 11:31:39 [-] services.db_service INFO — DBService.save_audit_log() — user=1, pass=True [NOT PERSISTED]
+2026-05-05 11:32:00 [-] orchestrator.pipeline INFO — run_chat for user: 1, route pending
+2026-05-05 11:32:00 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-05 11:32:01 [-] orchestrator.pipeline ERROR — Pipeline failure for 1: name '_history' is not defined
+2026-05-05 11:32:12 [-] orchestrator.pipeline INFO — run_chat for user: 2, route pending
+2026-05-05 11:32:12 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-05 11:32:13 [-] orchestrator.pipeline ERROR — Pipeline failure for 2: name '_history' is not defined
+2026-05-05 11:32:24 [-] orchestrator.pipeline INFO — run_chat for user: anonymous, route pending
+2026-05-05 11:32:24 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-05 11:32:24 [-] orchestrator.pipeline ERROR — Pipeline failure for anonymous: name '_history' is not defined
+2026-05-05 11:32:39 [-] orchestrator.pipeline INFO — run_chat for user: anonymous, route pending
+2026-05-05 11:32:39 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-05 11:32:40 [-] orchestrator.pipeline ERROR — Pipeline failure for anonymous: name '_history' is not defined
+2026-05-05 11:38:28 [-] services.rag_service INFO — Initializing RAGService
+2026-05-05 11:38:28 [-] services.rag_service INFO — RAGService in MOCK mode (keyword search)
+2026-05-05 11:38:28 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-05 11:38:28 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-05 11:38:34 [-] services.rag_service INFO — Initializing RAGService
+2026-05-05 11:38:34 [-] services.rag_service INFO — RAGService in MOCK mode (keyword search)
+2026-05-05 11:38:34 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-05 11:38:34 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-05 11:38:35 [-] orchestrator.pipeline INFO — run_chat for user: anonymous, route pending
+2026-05-05 11:38:35 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-05 11:38:35 [-] orchestrator.pipeline ERROR — Pipeline failure for anonymous: name '_history' is not defined
+2026-05-05 11:43:22 [-] services.rag_service INFO — Initializing RAGService
+2026-05-05 11:43:22 [-] services.rag_service INFO — RAGService in MOCK mode (keyword search)
+2026-05-05 11:43:22 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-05 11:43:22 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-05 11:43:30 [-] orchestrator.pipeline INFO — run_chat for user: anonymous, route pending
+2026-05-05 11:43:30 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-05 11:43:30 [-] orchestrator.pipeline ERROR — Pipeline failure for anonymous: name '_history' is not defined
+2026-05-05 11:45:54 [-] orchestrator.pipeline INFO — run_chat for user: student_test_01, route pending
+2026-05-05 11:45:54 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-05 11:45:55 [-] orchestrator.pipeline ERROR — Pipeline failure for student_test_01: name '_history' is not defined
+2026-05-05 11:46:30 [-] orchestrator.pipeline INFO — run_chat for user: student_test_01, route pending
+2026-05-05 11:46:30 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-05 11:46:30 [-] orchestrator.pipeline ERROR — Pipeline failure for student_test_01: name '_history' is not defined
+2026-05-05 12:30:38 [-] services.rag_service INFO — Initializing RAGService
+2026-05-05 12:30:38 [-] services.rag_service INFO — RAGService in MOCK mode (keyword search)
+2026-05-05 12:30:38 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-05 12:30:38 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-05 12:30:46 [-] orchestrator.pipeline INFO — run_chat for user: anonymous, route pending
+2026-05-05 12:30:46 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-05 12:30:46 [-] agents.rag INFO — RAGAgent.run() — question: 'string'
+2026-05-05 12:30:46 [-] services.llm_client WARNING — LLM retry 1: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 12:30:47 [-] services.llm_client WARNING — LLM retry 2: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 12:30:48 [-] services.llm_client WARNING — LLM retry 3: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 12:30:49 [-] services.llm_client ERROR — LLM failed after retries
+2026-05-05 12:30:49 [-] orchestrator.pipeline INFO — AUDIT [anonymous] judge_pass=True — Score: 1.0
+2026-05-05 12:30:49 [-] services.db_service INFO — DBService.save_audit_log() — user=anonymous, pass=True [NOT PERSISTED]
+2026-05-05 12:31:09 [-] orchestrator.pipeline INFO — run_chat for user: anonymous, route pending
+2026-05-05 12:31:09 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-05 12:31:09 [-] agents.advisor INFO — AdvisorAgent.run() called
+2026-05-05 12:31:09 [-] orchestrator.pipeline INFO — AUDIT [anonymous] judge_pass=True — Score: 1.0
+2026-05-05 12:31:09 [-] services.db_service INFO — DBService.save_audit_log() — user=anonymous, pass=True [NOT PERSISTED]
+2026-05-05 12:31:26 [-] services.rag_service INFO — Initializing RAGService
+2026-05-05 12:31:26 [-] services.rag_service INFO — RAGService in MOCK mode (keyword search)
+2026-05-05 12:31:26 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-05 12:31:26 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-05 12:31:27 [-] orchestrator.pipeline INFO — run_chat for user: anonymous, route pending
+2026-05-05 12:31:27 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-05 12:31:27 [-] agents.advisor INFO — AdvisorAgent.run() called
+2026-05-05 12:31:27 [-] orchestrator.pipeline INFO — AUDIT [anonymous] judge_pass=True — Score: 1.0
+2026-05-05 12:31:27 [-] services.db_service INFO — DBService.save_audit_log() — user=anonymous, pass=True [NOT PERSISTED]
+2026-05-05 12:32:18 [-] orchestrator.pipeline INFO — run_match for user: [EMAIL]
+2026-05-05 12:32:19 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 1.0
+2026-05-05 12:32:19 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-05 14:27:32 [-] services.rag_service INFO — Initializing RAGService
+2026-05-05 14:27:32 [-] services.rag_service INFO — RAGService in MOCK mode (keyword search)
+2026-05-05 14:27:32 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-05 14:27:32 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-05 14:28:19 [-] orchestrator.pipeline INFO — run_match for user: [EMAIL]
+2026-05-05 14:28:20 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 1.0
+2026-05-05 14:28:20 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-05 14:29:28 [-] orchestrator.pipeline INFO — run_chat for user: anonymous, route pending
+2026-05-05 14:29:28 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-05 14:29:29 [-] agents.rag INFO — RAGAgent.run() — question: 'Khoa hoc may tinh'
+2026-05-05 14:29:29 [-] services.llm_client WARNING — LLM retry 1: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 14:29:30 [-] services.llm_client WARNING — LLM retry 2: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 14:29:31 [-] services.llm_client WARNING — LLM retry 3: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 14:29:32 [-] services.llm_client ERROR — LLM failed after retries
+2026-05-05 14:29:32 [-] agents.rag INFO — RAGAgent operating in MOCK mode
+2026-05-05 14:29:32 [-] orchestrator.pipeline INFO — AUDIT [anonymous] judge_pass=True — Score: 1.0
+2026-05-05 14:29:32 [-] services.db_service INFO — DBService.save_audit_log() — user=anonymous, pass=True [NOT PERSISTED]
+2026-05-05 14:30:22 [-] orchestrator.pipeline INFO — run_chat for user: anonymous, route pending
+2026-05-05 14:30:22 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-05 14:30:23 [-] agents.rag INFO — RAGAgent.run() — question: 'hello'
+2026-05-05 14:30:23 [-] services.llm_client WARNING — LLM retry 1: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 14:30:24 [-] services.llm_client WARNING — LLM retry 2: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 14:30:25 [-] services.llm_client WARNING — LLM retry 3: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 14:30:26 [-] services.llm_client ERROR — LLM failed after retries
+2026-05-05 14:30:26 [-] orchestrator.pipeline INFO — AUDIT [anonymous] judge_pass=True — Score: 1.0
+2026-05-05 14:30:26 [-] services.db_service INFO — DBService.save_audit_log() — user=anonymous, pass=True [NOT PERSISTED]
+2026-05-05 14:30:38 [-] orchestrator.pipeline INFO — run_chat for user: anonymous, route pending
+2026-05-05 14:30:38 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-05 14:30:38 [-] agents.rag INFO — RAGAgent.run() — question: 'Khoa hoc may tinh'
+2026-05-05 14:30:38 [-] services.llm_client WARNING — LLM retry 1: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 14:30:39 [-] services.llm_client WARNING — LLM retry 2: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 14:30:40 [-] services.llm_client WARNING — LLM retry 3: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 14:30:41 [-] services.llm_client ERROR — LLM failed after retries
+2026-05-05 14:30:41 [-] agents.rag INFO — RAGAgent operating in MOCK mode
+2026-05-05 14:30:41 [-] orchestrator.pipeline INFO — AUDIT [anonymous] judge_pass=True — Score: 1.0
+2026-05-05 14:30:41 [-] services.db_service INFO — DBService.save_audit_log() — user=anonymous, pass=True [NOT PERSISTED]
+2026-05-05 14:31:02 [-] services.rag_service INFO — Initializing RAGService
+2026-05-05 14:31:04 [-] services.rag_service INFO — Seeding Chroma with demo corpus...
+2026-05-05 14:31:30 [-] services.rag_service INFO — Initializing RAGService
+2026-05-05 14:31:30 [-] services.rag_service INFO — Seeding Chroma with demo corpus...
+2026-05-05 14:31:37 [-] services.rag_service INFO — Ingested 9 documents into Chroma
+2026-05-05 14:31:37 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-05 14:31:37 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-05 14:31:51 [-] orchestrator.pipeline INFO — run_chat for user: anonymous, route pending
+2026-05-05 14:31:51 [-] orchestrator.pipeline INFO — Pipeline operating in REAL mode
+2026-05-05 14:31:51 [-] orchestrator.router INFO — Routing message: 'Khoa hoc may tinh...'
+2026-05-05 14:31:51 [-] orchestrator.router ERROR — Router failure: 'NoneType' object has no attribute 'generate_content' → fallback to 'rag'
+2026-05-05 14:31:51 [-] agents.rag INFO — RAGAgent.run() — question: 'Khoa hoc may tinh'
+2026-05-05 14:31:51 [-] services.llm_client WARNING — LLM retry 1: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 14:31:52 [-] services.llm_client WARNING — LLM retry 2: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 14:31:53 [-] services.llm_client WARNING — LLM retry 3: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 14:31:54 [-] services.llm_client ERROR — LLM failed after retries
+2026-05-05 14:31:55 [-] agents.rag ERROR — RAGAgent failure: 'NoneType' object has no attribute 'get'
+2026-05-05 14:31:55 [-] agents.judge INFO — JudgeAgent.evaluate() called
+2026-05-05 14:31:55 [-] orchestrator.pipeline WARNING — Judge REJECTED response for user anonymous. Reason: model_not_initialized
+2026-05-05 14:31:55 [-] orchestrator.pipeline INFO — AUDIT [anonymous] judge_pass=False — Score: 0
+2026-05-05 14:31:55 [-] services.db_service INFO — DBService.save_audit_log() — user=anonymous, pass=False [NOT PERSISTED]
+2026-05-05 14:32:36 [-] orchestrator.pipeline INFO — run_chat for user: anonymous, route pending
+2026-05-05 14:32:36 [-] orchestrator.pipeline INFO — Pipeline operating in REAL mode
+2026-05-05 14:32:36 [-] orchestrator.router INFO — Routing message: 'Học phí của khoa học máy tính...'
+2026-05-05 14:32:36 [-] orchestrator.router ERROR — Router failure: 'NoneType' object has no attribute 'generate_content' → fallback to 'rag'
+2026-05-05 14:32:36 [-] agents.rag INFO — RAGAgent.run() — question: 'Học phí của khoa học máy tính'
+2026-05-05 14:32:36 [-] services.llm_client WARNING — LLM retry 1: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 14:32:37 [-] services.llm_client WARNING — LLM retry 2: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 14:32:38 [-] services.llm_client WARNING — LLM retry 3: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 14:32:39 [-] services.llm_client ERROR — LLM failed after retries
+2026-05-05 14:32:39 [-] agents.rag ERROR — RAGAgent failure: 'NoneType' object has no attribute 'get'
+2026-05-05 14:32:39 [-] agents.judge INFO — JudgeAgent.evaluate() called
+2026-05-05 14:32:39 [-] orchestrator.pipeline WARNING — Judge REJECTED response for user anonymous. Reason: model_not_initialized
+2026-05-05 14:32:39 [-] orchestrator.pipeline INFO — AUDIT [anonymous] judge_pass=False — Score: 0
+2026-05-05 14:32:39 [-] services.db_service INFO — DBService.save_audit_log() — user=anonymous, pass=False [NOT PERSISTED]
+2026-05-05 14:35:38 [-] orchestrator.pipeline INFO — run_match for user: [EMAIL]
+2026-05-05 14:35:38 [-] agents.advisor INFO — AdvisorAgent.match_majors() called
+2026-05-05 14:35:38 [-] agents.judge INFO — JudgeAgent.evaluate() called
+2026-05-05 14:35:38 [-] orchestrator.pipeline WARNING — Judge rejected match result for [EMAIL]
