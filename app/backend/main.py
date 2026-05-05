@@ -60,7 +60,15 @@ async def health_check():
 @app.post("/api/chat")
 async def chat(request: ChatRequest):
     """Route free-form chat messages through the pipeline."""
-    return pipeline.run_chat(request.user_id, request.message, request.history)
+    if not request.message.strip():
+        raise HTTPException(status_code=400, detail="Message text cannot be empty")
+
+    # Ensure the orchestrator result is wrapped in the structure 
+    # expected by ConsultantPage.jsx (response.response)
+    chat_response = pipeline.run_chat(request.user_id, request.message, request.history)
+    if isinstance(chat_response, str):
+        return {"response": chat_response}
+    return chat_response
 
 @app.post("/api/auth/signup")
 async def signup(request: SignupRequest):

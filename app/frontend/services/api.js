@@ -21,9 +21,9 @@ export const api = {
     return response.json();
   },
 
-  async sendMessage(userId, message, sessionId = null) {
+  async sendMessage(userId, text, history = []) {
     try {
-      return await this.postChat({ user_id: userId, message, session_id: sessionId });
+      return await this.postChat({ userId, text, history });
     } catch (error) {
       console.error("api.sendMessage failed:", error);
       throw error;

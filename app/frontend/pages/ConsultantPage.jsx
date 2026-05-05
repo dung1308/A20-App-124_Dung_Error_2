@@ -49,9 +49,20 @@ const ConsultantPage = () => {
 
     try {
       // Prepare history for API (excluding complex data objects)
-      const history = messages.map(m => ({ role: String(m.role), content: String(m.content) }));
+      // Only include role and content to match standard LLM/RAG expectations
+      const history = messages.map(m => ({ 
+        role: String(m.role), 
+        content: String(m.content || "") 
+      }));
+
+      const payload = {
+        userId: String(userId || "anonymous"),
+        text: String(text),
+        history: history
+      };
+
       // Fallback to anonymous if no userId is present to prevent 422
-      const response = await api.postChat(String(userId || "anonymous"), String(text), history);
+      const response = await api.postChat(payload);
       setMessages(prev => [...prev, { role: 'assistant', content: response.response }]);
     } catch (error) {
       setMessages(prev => [...prev, { role: 'assistant', content: "Xin lỗi, tôi gặp chút trục trặc khi kết nối. Bạn có thể thử lại không?" }]);

@@ -179,3 +179,70 @@
 2026-05-05 14:35:38 [-] agents.advisor INFO — AdvisorAgent.match_majors() called
 2026-05-05 14:35:38 [-] agents.judge INFO — JudgeAgent.evaluate() called
 2026-05-05 14:35:38 [-] orchestrator.pipeline WARNING — Judge rejected match result for [EMAIL]
+2026-05-05 16:08:13 [-] services.rag_service INFO — Initializing RAGService
+2026-05-05 16:08:13 [-] services.rag_service INFO — RAGService in MOCK mode (keyword search)
+2026-05-05 16:08:13 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-05 16:08:13 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-05 16:08:33 [-] orchestrator.pipeline INFO — run_match for user: [EMAIL]
+2026-05-05 16:08:34 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 1.0
+2026-05-05 16:08:34 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-05 16:11:02 [-] services.rag_service INFO — Initializing RAGService
+2026-05-05 16:11:02 [-] services.rag_service INFO — RAGService in MOCK mode (keyword search)
+2026-05-05 16:11:02 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-05 16:11:02 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-05 16:11:54 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-05 16:11:54 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-05 16:11:55 [-] agents.rag INFO — RAGAgent.run() — question: 'Hello'
+2026-05-05 16:11:55 [-] services.llm_client WARNING — LLM retry 1: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 16:11:56 [-] services.llm_client WARNING — LLM retry 2: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 16:11:57 [-] services.llm_client WARNING — LLM retry 3: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 16:11:58 [-] services.llm_client ERROR — LLM failed after retries
+2026-05-05 16:11:58 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 1.0
+2026-05-05 16:11:58 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-05 16:12:07 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-05 16:12:07 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-05 16:12:08 [-] agents.advisor INFO — AdvisorAgent.run() called
+2026-05-05 16:12:08 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 1.0
+2026-05-05 16:12:08 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-05 16:12:26 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-05 16:12:26 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-05 16:12:27 [-] agents.rag INFO — RAGAgent.run() — question: 'Cơ hội nào ?'
+2026-05-05 16:12:27 [-] services.llm_client WARNING — LLM retry 1: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 16:12:28 [-] services.llm_client WARNING — LLM retry 2: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 16:12:29 [-] services.llm_client WARNING — LLM retry 3: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 16:12:30 [-] services.llm_client ERROR — LLM failed after retries
+2026-05-05 16:12:30 [-] agents.rag INFO — RAGAgent operating in MOCK mode
+2026-05-05 16:12:30 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 1.0
+2026-05-05 16:12:30 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-05 16:12:48 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-05 16:12:48 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-05 16:12:49 [-] agents.rag INFO — RAGAgent.run() — question: 'Bạn hãy nói đi'
+2026-05-05 16:12:49 [-] services.llm_client WARNING — LLM retry 1: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 16:12:50 [-] services.llm_client WARNING — LLM retry 2: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 16:12:51 [-] services.llm_client WARNING — LLM retry 3: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 16:12:52 [-] services.llm_client ERROR — LLM failed after retries
+2026-05-05 16:12:52 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 1.0
+2026-05-05 16:12:52 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-05 16:12:55 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-05 16:12:55 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-05 16:12:55 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 1.0
+2026-05-05 16:12:55 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-05 16:12:57 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-05 16:12:57 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-05 16:12:58 [-] agents.rag INFO — RAGAgent.run() — question: 'Triển vọng nghề nghiệp'
+2026-05-05 16:12:58 [-] services.llm_client WARNING — LLM retry 1: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 16:12:59 [-] services.llm_client WARNING — LLM retry 2: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 16:13:00 [-] services.llm_client WARNING — LLM retry 3: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 16:13:01 [-] services.llm_client ERROR — LLM failed after retries
+2026-05-05 16:13:01 [-] agents.rag INFO — RAGAgent operating in MOCK mode
+2026-05-05 16:13:01 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 1.0
+2026-05-05 16:13:01 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-05 16:13:02 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-05 16:13:02 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-05 16:13:03 [-] agents.rag INFO — RAGAgent.run() — question: 'So sánh mức lương'
+2026-05-05 16:13:03 [-] services.llm_client WARNING — LLM retry 1: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 16:13:04 [-] services.llm_client WARNING — LLM retry 2: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 16:13:05 [-] services.llm_client WARNING — LLM retry 3: 'NoneType' object has no attribute 'generate_content'
+2026-05-05 16:13:06 [-] services.llm_client ERROR — LLM failed after retries
+2026-05-05 16:13:06 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 1.0
+2026-05-05 16:13:06 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
