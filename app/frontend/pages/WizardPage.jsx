@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../state/store';
 import { api } from '../services/api';
@@ -11,7 +11,7 @@ import CVUpload from '../components/CVUpload/CVUpload';
 const WizardPage = () => {
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
-  const { userId, wizardData, setWizardData, setMatchResults, cvText, cvSignals } = useStore();
+  const { userId, setUserId, wizardData, setWizardData, setMatchResults, cvText, cvSignals } = useStore();
   const navigate = useNavigate();
 
   const stepsMap = {
@@ -28,6 +28,14 @@ const WizardPage = () => {
     4: <Step4 data={wizardData.work_style} onUpdate={setWizardData} />,
   };
 
+  // Persist session if store is cleared on refresh
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('user_email');
+    if (!userId && savedEmail) {
+      setUserId(savedEmail);
+    }
+  }, [userId, setUserId]);
+
   /**
    * Basic validation to ensure the student has selected 
    * at least one option before proceeding.
@@ -39,6 +47,14 @@ const WizardPage = () => {
     if (step === 3) return wizardData.dislikes.length > 0;
     if (step === 4) return wizardData.work_style !== '';
     return false;
+  };
+
+  const handleSkip = () => {
+    const email = userId || localStorage.getItem('user_email');
+    if (email) {
+      localStorage.setItem(`wizard_completed_${email}`, 'true');
+    }
+    navigate('/dashboard');
   };
 
   const handleNext = () => {
@@ -65,6 +81,10 @@ const WizardPage = () => {
         cv_signals: cvSignals 
       });
       setMatchResults(result);
+      const email = userId || localStorage.getItem('user_email');
+      if (email) {
+        localStorage.setItem(`wizard_completed_${email}`, 'true');
+      }
       navigate('/dashboard');
     } catch (err) {
       console.error("Match submission failed:", err);
@@ -96,9 +116,12 @@ const WizardPage = () => {
           </div>
           
           <div className="nav-buttons mt-12 flex justify-between gap-4">
-            {step > 0 ? (
-              <button onClick={() => setStep(step - 1)} className="px-6 py-3 text-slate-500 font-bold hover:text-blue-900 transition-colors">Quay lại</button>
-            ) : <div></div>}
+            <div className="flex items-center gap-2">
+              {step > 0 && (
+                <button onClick={() => setStep(step - 1)} className="px-6 py-3 text-slate-500 font-bold hover:text-blue-900 transition-colors">Quay lại</button>
+              )}
+              <button onClick={handleSkip} className="px-4 py-2 text-slate-400 text-[11px] font-bold uppercase tracking-widest hover:text-slate-600 transition-colors">Bỏ qua phần chọn lựa</button>
+            </div>
             
             {step < 4 ? (
               <button onClick={handleNext} className="px-10 py-3 bg-blue-900 text-white rounded-xl font-bold shadow-lg shadow-blue-900/20 active:scale-95 transition-all">Tiếp theo</button>

@@ -1,11 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '../state/store';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../services/api';
+import LeftPanel from '../components/panels/LeftPanel';
+import UpperPanel from '../components/panels/UpperPanel';
 
 const ConsultantPage = () => {
-  const { matchResults, userId, setUserId, role } = useStore();
-  const [messages, setMessages] = useState([]);
+  const { matchResults, userId, setUserId } = useStore();
+  const [messages, setMessages] = useState(() => {
+    const saved = localStorage.getItem('chat_history');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef(null);
@@ -31,6 +36,11 @@ const ConsultantPage = () => {
       setUserId(savedEmail);
     }
   }, [userId, setUserId]);
+
+  // Persist chat history to localStorage whenever messages change
+  useEffect(() => {
+    localStorage.setItem('chat_history', JSON.stringify(messages));
+  }, [messages]);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -73,77 +83,10 @@ const ConsultantPage = () => {
 
   return (
     <div className="consultant-layout flex h-screen w-full overflow-hidden bg-[#f8f9ff] font-inter text-[#0d1c2e]">
-      {/* Left Panel */}
-      <aside className="hidden md:flex flex-col h-full w-64 border-r border-slate-200 bg-slate-50 flex-shrink-0 z-20">
-        <div className="px-6 py-8">
-          <h2 className="text-lg font-bold text-blue-900">Admissions Portal</h2>
-          <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mt-1">AI-Driven Success</p>
-        </div>
-        <nav className="flex flex-col gap-y-1 py-2">
-          <Link to="/dashboard" className="text-slate-500 px-4 py-2.5 mx-2 flex items-center gap-3 font-inter text-[13px] font-semibold hover:bg-slate-100 transition-colors">
-            <span className="material-symbols-outlined text-[20px]">dashboard</span>
-            Dashboard
-          </Link>
-          <Link to="/consultant" className="bg-blue-50 text-blue-700 rounded-lg mx-2 px-4 py-2.5 flex items-center gap-3 font-inter text-[13px] font-semibold">
-            <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>smart_toy</span>
-            AI Consultant
-          </Link>
-          <a href="#" className="text-slate-500 px-4 py-2.5 mx-2 flex items-center gap-3 font-inter text-[13px] font-semibold hover:bg-slate-100 transition-colors">
-            <span className="material-symbols-outlined text-[20px]">school</span>
-            Major Discovery
-          </a>
-          <a href="#" className="text-slate-500 px-4 py-2.5 mx-2 flex items-center gap-3 font-inter text-[13px] font-semibold hover:bg-slate-100 transition-colors">
-            <span className="material-symbols-outlined text-[20px]">library_books</span>
-            Resources
-          </a>
-        </nav>
-        <div className="mt-auto p-4">
-          <div className="bg-[#003466] text-white rounded-xl p-4 shadow-lg shadow-blue-900/10">
-            <p className="text-xs font-semibold opacity-80 mb-2">Need human advice?</p>
-            <button className="w-full py-2 bg-[#fed65b] text-[#745c00] text-[12px] font-bold rounded-lg active:scale-95 transition-transform">
-              Schedule Expert Call
-            </button>
-          </div>
-          <div className="mt-6 flex items-center gap-3 px-2">
-            <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden flex-shrink-0">
-              <div className="w-full h-full bg-blue-200 flex items-center justify-center text-blue-900 font-bold text-xs">AJ</div>
-            </div>
-            <div>
-              <p className="text-sm font-bold text-slate-800">Alex Johnson</p>
-              <p className="text-[10px] text-slate-500">Premium Member</p>
-            </div>
-          </div>
-        </div>
-      </aside>
+      <LeftPanel />
 
       <div className="flex-1 flex flex-col">
-        {/* Upper Panel */}
-        <header className="h-16 px-8 flex justify-between items-center bg-white/95 backdrop-blur-md border-b border-slate-200 z-10 flex-shrink-0">
-          <div className="flex items-center gap-4">
-            <h1 className="text-xl font-black tracking-tighter text-blue-900">Brilliant Mentor</h1>
-            <nav className="hidden lg:flex items-center gap-6 ml-8">
-              <Link to="/" className="text-sm font-medium text-slate-600 hover:text-blue-700">Home</Link>
-              <a href="#" className="text-sm font-medium text-slate-600 hover:text-blue-700">Major Guide</a>
-              <Link to="/consultant" className="text-sm font-medium text-blue-700 border-b-2 border-blue-700 pb-1">Consultation</Link>
-            </nav>
-          </div>
-          <div className="hidden sm:flex items-center gap-3">
-            {userId ? (
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 rounded-lg">
-                <div className={`w-2 h-2 rounded-full animate-pulse ${role === 'admin' ? 'bg-purple-500' : 'bg-green-500'}`}></div>
-                <span className="text-xs font-semibold text-blue-900">{userId}</span>
-                {role === 'admin' && (
-                  <span className="ml-1 px-1.5 py-0.5 bg-purple-100 text-purple-700 text-[9px] font-black rounded uppercase tracking-tighter">Engineer</span>
-                )}
-              </div>
-            ) : (
-              <>
-                <button className="px-4 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-lg">Sign In</button>
-                <button className="px-5 py-2 text-sm font-semibold bg-[#003466] text-white rounded-full shadow-md active:scale-95 transition-transform">Get Started</button>
-              </>
-            )}
-          </div>
-        </header>
+        <UpperPanel activeLink="consultation" />
 
         {/* Chat Canvas */}
         <main ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-8 md:px-12 lg:px-24 scroll-smooth chat-scrollbar">

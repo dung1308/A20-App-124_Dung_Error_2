@@ -34,7 +34,12 @@ const AuthPage = () => {
           setRole(data.role || 'user');
         }
         
-        navigate('/wizard');
+        const isWizardCompleted = localStorage.getItem(`wizard_completed_${data.user_email}`) === 'true';
+        if (isWizardCompleted) {
+          navigate('/dashboard');
+        } else {
+          navigate('/wizard');
+        }
       } else {
         setIsLogin(true);
         alert('Đăng ký thành công! Vui lòng đăng nhập.');

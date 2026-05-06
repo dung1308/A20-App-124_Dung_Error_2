@@ -7,6 +7,7 @@ from typing import List, Dict, Any, Optional
 from orchestrator.pipeline import Pipeline
 from utils.logger import get_logger
 from fastapi import UploadFile, File
+from database import init_database
 
 logger = get_logger(__name__)
 
@@ -24,6 +25,17 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Initialize database on startup
+@app.on_event("startup")
+def startup_event():
+    """Initialize database when the application starts."""
+    try:
+        init_database()
+        logger.info("Database initialized on startup")
+    except Exception as e:
+        logger.error(f"Failed to initialize database on startup: {e}")
+        # Don't raise — allow app to start anyway
 
 # Initialize the Orchestrator Pipeline
 pipeline = Pipeline()
