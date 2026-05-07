@@ -9,12 +9,8 @@ Swapping LLM providers = edit this one file only.
 
 import os
 import logging
-from functools import lru_cache
 from dotenv import load_dotenv
-
-
-# TODO: Uncomment once google-generativeai is installed
-import google.generativeai as genai
+from openai import OpenAI
 
 load_dotenv()
 
@@ -24,7 +20,10 @@ logger = logging.getLogger(__name__)
 # Environment variables
 # ---------------------------------------------------------------------------
 
-GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
+OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
+OPENAI_MODEL: str = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
+
 DATABASE_URL: str = os.getenv(
     "DATABASE_URL", "sqlite:///./vinuni_match.db"  # SQLite fallback for dev
 )
@@ -38,9 +37,8 @@ RATE_LIMIT_MAX_REQUESTS: int = int(os.getenv("RATE_LIMIT_MAX_REQUESTS", "10"))
 RATE_LIMIT_WINDOW_SECONDS: int = int(os.getenv("RATE_LIMIT_WINDOW_SECONDS", "60"))
 DAILY_LLM_BUDGET: float = float(os.getenv("DAILY_LLM_BUDGET", "100"))
 
-# TODO: Raise ValueError if GEMINI_API_KEY is empty in non-development environments
-if not GEMINI_API_KEY:
-    logger.warning("GEMINI_API_KEY not set — LLM calls will fail at runtime.")
+if not OPENAI_API_KEY and not USE_MOCK:
+    logger.warning("OPENAI_API_KEY not set — LLM calls will fail at runtime.")
 
 # ---------------------------------------------------------------------------
 # Logging setup
@@ -91,41 +89,6 @@ class MockGenerativeModel:
         
         return MockResponse(text)
 
-    def embed_content(self, content: str, **kwargs):
-        """Mock embedding response."""
-        class MockEmbedding:
-            def __init__(self): self.embedding = [0.1] * 768
-        return MockEmbedding()
-
-@lru_cache(maxsize=1)
-def get_gemini_model(model_name: str = "gemini-1.5-flash"):
-    """
-    Return a cached Gemini GenerativeModel instance.
-    lru_cache ensures the model is initialised once per process.
-
-    HINGE RULE: Every agent that needs LLM access imports and calls THIS function.
-    No other file should import google.generativeai directly.
-
-    TODO: Un-comment genai lines once google-generativeai is installed.
-    TODO: Add retry logic / exponential backoff wrapper around the returned model.
-    TODO: Add token-usage tracking to enforce DAILY_LLM_BUDGET.
-
-    Args:
-        model_name: Gemini model identifier string.
-
-    Returns:
-        A configured GenerativeModel ready to call .generate_content().
-    """
-    if USE_MOCK:
-        logger.info(f"USE_MOCK is True. Returning MockGenerativeModel for {model_name}")
-        return None  # Return None to let agents know to use mock responses directly
-
-    # TODO: Replace stub with real initialisation
-    # genai.configure(api_key=GEMINI_API_KEY)
-    # return genai.GenerativeModel(model_name)
-    return None
-
-
 def get_database_url() -> str:
     """
     Return the database URL from environment.
@@ -139,9 +102,9 @@ def embed_text(text: str):
     if USE_MOCK:
         return None
 
-    genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-    result = genai.embed_content(
-        model="gemini-embedding-2",
-        content=text
+    client = OpenAI(api_key=OPENAI_API_KEY)
+    response = client.embeddings.create(
+        model=EMBEDDING_MODEL,
+        input=text
     )
-    return result["embedding"]
+    return response.data[0].embedding

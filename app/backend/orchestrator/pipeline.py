@@ -15,6 +15,7 @@ Coordinates the full pipeline for both /api/match and /api/chat:
     → Response
 """
 
+import json
 import logging
 import time
 from typing import List, Dict, Any, Optional
@@ -214,12 +215,33 @@ class Pipeline:
                 safe_response = "Tôi xin lỗi, nhưng tôi không thể trả lời câu hỏi này vì lý do an toàn. Bạn có câu hỏi nào khác về VinUni không?"
                 route = "fallback"
             
-            # TODO: 8. audit_log(user_id, message, safe_response, judge_result).
-            self._audit_log(user_id, message, safe_response, judge_result)
-
-            # TODO: 9. Return {"response": safe_response, "agent": route}.
             status = "success" if judge_result.get("pass", False) else "rejected"
-            return {"response": safe_response, "intent": route, "status": status}
+            
+            response_data = {
+                "response": safe_response,
+                "intent": route,
+                "status": status,
+                "major": None
+            }
+
+            # If route is advisor, extract structured data for the frontend cards
+            if route == "advisor":
+                try:
+                    json_text = safe_response
+                    if "```json" in json_text:
+                        json_text = json_text.split("```json")[1].split("```")[0].strip()
+                    elif "```" in json_text:
+                        json_text = json_text.split("```")[1].split("```")[0].strip()
+                    
+                    parsed = json.loads(json_text)
+                    if "top3" in parsed:
+                        response_data["response"] = parsed.get("answer", "Dựa trên trao đổi của chúng ta, đây là 3 ngành học tiềm năng nhất dành cho bạn:")
+                        response_data["major"] = self.advisor._validate_and_enrich(parsed["top3"])
+                except Exception as e:
+                    logger.warning(f"Structured advisor parsing failed: {e}")
+
+            self._audit_log(user_id, message, safe_response, judge_result)
+            return response_data
 
         except Exception as e:
             logger.error(f"Pipeline failure for {user_id}: {str(e)}")
@@ -263,10 +285,9 @@ class Pipeline:
             return "Bạn muốn được kết nối với tư vấn viên của chúng tôi không?"
         
         if route == "advisor":
-            return self.advisor.run(message, history)
+            return self.advisor.run(message, history, user_id=user_id)
         elif route == "crm":
-            # Placeholder until CRMAgent is fully implemented
-            return f"Dựa trên hồ sơ của bạn, chúng tôi đang xem xét các lựa chọn phù hợp nhất tại VinUni."
+            return self.crm.run(user_id, message)
         elif route == "rag":
             return self.rag.run(message, user_id=user_id)
         
@@ -290,6 +311,11 @@ class Pipeline:
         output_data: Any,
         judge_result: Dict,
     ) -> None:
+        # Redact PII from input_data before logging
+        redacted_input_data = self.output_guard.redact(str(input_data))
+        # Redact PII from user_id if it's an email or phone number
+        redacted_user_id = self.output_guard.redact(user_id)
+
         """
         Persist an audit record to the database.
 

@@ -14,7 +14,8 @@ import json
 import logging
 from typing import Dict, Any
 
-from config import get_gemini_model, USE_MOCK
+from config import USE_MOCK
+from services.llm_client import LLMClient
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -42,7 +43,7 @@ class JudgeAgent:
     """
 
     def __init__(self):
-        self.model = get_gemini_model()
+        self.llm = None if USE_MOCK else LLMClient()
 
     def evaluate(self, input_text: str, output_text: str) -> Dict[str, Any]:
         """
@@ -76,19 +77,19 @@ class JudgeAgent:
                 return {"pass": True, "reason": "Safe (Mock check passed)", "score": 100}
 
             # TODO: Remove stub and implement real Gemini call
-            if not self.model:
-                return self._fail_safe("model_not_initialized")
+            if not self.llm:
+                return self._fail_safe("llm_client_not_initialized")
 
             # TODO: 1. Build prompt: JUDGE_SYSTEM_PROMPT + input + output.
             prompt = self._build_judge_prompt(input_text, output_text)
 
-            # TODO: 2. Call self.model.generate_content(prompt).
-            response = self.model.generate_content(prompt)
-            if not response or not response.text:
+            # TODO: 2. Call self.llm.generate(prompt).
+            response = self.llm.generate(prompt)
+            if not response or response == "I don't know":
                 return self._fail_safe("empty_llm_response")
 
-            # TODO: 3. Parse JSON from response.text — catch JSONDecodeError → _fail_safe().
-            clean_text = response.text.strip()
+            # TODO: 3. Parse JSON from response — catch JSONDecodeError → _fail_safe().
+            clean_text = response.strip()
             if "```" in clean_text:
                 # Extract JSON from potential markdown code blocks
                 clean_text = clean_text.split("```")[1].replace("json", "", 1).strip()

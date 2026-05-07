@@ -14,7 +14,8 @@ import logging
 import json
 from typing import List, Dict, Any
 
-from config import get_gemini_model, USE_MOCK
+from config import USE_MOCK
+from services.llm_client import LLMClient
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -37,7 +38,7 @@ Respond with ONLY the label. No explanation.
 class LLMRouter:
     def __init__(self):
         # ✅ Do NOT load model in MOCK mode
-        self.model = None if USE_MOCK else get_gemini_model()
+        self.llm = None if USE_MOCK else LLMClient()
 
     # ------------------------------------------------------------------
     # Public API
@@ -62,13 +63,13 @@ class LLMRouter:
         # ==========================================================
         try:
             prompt = self._build_routing_prompt(message, history)
-            response = self.model.generate_content(prompt)
+            response = self.llm.generate(prompt)
 
-            if not response or not response.text:
+            if not response or response == "I don't know":
                 logger.warning("Empty LLM response → default to 'rag'")
                 return "rag"
 
-            label = response.text.strip().lower()
+            label = response.strip().lower()
 
             if label in VALID_ROUTES:
                 logger.info(f"[LLM] Routed to: {label}")

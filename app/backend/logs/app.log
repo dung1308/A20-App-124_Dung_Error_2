@@ -304,3 +304,475 @@
 2026-05-06 11:36:46 [-] services.llm_client ERROR — LLM failed after retries
 2026-05-06 11:36:46 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 1.0
 2026-05-06 11:36:46 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-06 19:37:42 [-] services.rag_service INFO — Initializing RAGService
+2026-05-06 19:37:42 [-] services.rag_service INFO — RAGService in MOCK mode (keyword search)
+2026-05-06 19:37:42 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-06 19:37:42 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-06 19:37:42 [-] main INFO — Database initialized on startup
+2026-05-06 19:40:35 [-] orchestrator.pipeline INFO — run_match for user: [EMAIL]
+2026-05-06 19:40:36 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 1.0
+2026-05-06 19:40:36 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-06 19:40:39 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-06 19:40:39 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-06 19:40:40 [-] agents.rag INFO — RAGAgent.run() — question: 'Triển vọng nghề nghiệp'
+2026-05-06 19:40:40 [-] services.llm_client WARNING — LLM retry 1: 'NoneType' object has no attribute 'generate_content'
+2026-05-06 19:40:41 [-] services.llm_client WARNING — LLM retry 2: 'NoneType' object has no attribute 'generate_content'
+2026-05-06 19:40:42 [-] services.llm_client WARNING — LLM retry 3: 'NoneType' object has no attribute 'generate_content'
+2026-05-06 19:40:43 [-] services.llm_client ERROR — LLM failed after retries
+2026-05-06 19:40:43 [-] agents.rag INFO — RAGAgent operating in MOCK mode
+2026-05-06 19:40:43 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 1.0
+2026-05-06 19:40:43 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-06 19:52:21 [-] services.rag_service INFO — Initializing RAGService
+2026-05-06 19:52:21 [-] services.rag_service INFO — RAGService in MOCK mode (keyword search)
+2026-05-06 19:52:21 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-06 19:52:21 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-06 19:52:21 [-] main INFO — Database initialized on startup
+2026-05-06 19:52:27 [-] services.rag_service INFO — Initializing RAGService
+2026-05-06 19:52:27 [-] services.rag_service INFO — RAGService in MOCK mode (keyword search)
+2026-05-06 19:52:27 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-06 19:52:27 [-] services.db_service INFO — DBService initialised in MOCK mode (in-memory)
+2026-05-06 19:52:27 [-] main INFO — Database initialized on startup
+2026-05-06 19:52:27 [-] orchestrator.pipeline INFO — run_match for user: [EMAIL]
+2026-05-06 19:52:28 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 1.0
+2026-05-06 19:52:28 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-06 19:52:28 [-] main INFO — Wizard answers indexed for user context: [EMAIL]
+2026-05-06 19:52:32 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-06 19:52:32 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-06 19:52:32 [-] agents.rag INFO — RAGAgent.run() — question: 'Triển vọng nghề nghiệp'
+2026-05-06 19:52:32 [-] services.llm_client WARNING — LLM retry 1: 'NoneType' object has no attribute 'generate_content'
+2026-05-06 19:52:33 [-] services.llm_client WARNING — LLM retry 2: 'NoneType' object has no attribute 'generate_content'
+2026-05-06 19:52:34 [-] services.llm_client WARNING — LLM retry 3: 'NoneType' object has no attribute 'generate_content'
+2026-05-06 19:52:35 [-] services.llm_client ERROR — LLM failed after retries
+2026-05-06 19:52:35 [-] agents.rag INFO — RAGAgent operating in MOCK mode
+2026-05-06 19:52:36 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 1.0
+2026-05-06 19:52:36 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-06 19:52:59 [-] orchestrator.pipeline INFO — run_match for user: [EMAIL]
+2026-05-06 19:53:00 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 1.0
+2026-05-06 19:53:00 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-06 19:53:00 [-] main INFO — Wizard answers indexed for user context: [EMAIL]
+2026-05-06 19:53:02 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-06 19:53:02 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-06 19:53:03 [-] agents.rag INFO — RAGAgent.run() — question: 'Triển vọng nghề nghiệp'
+2026-05-06 19:53:03 [-] services.llm_client WARNING — LLM retry 1: 'NoneType' object has no attribute 'generate_content'
+2026-05-06 19:53:04 [-] services.llm_client WARNING — LLM retry 2: 'NoneType' object has no attribute 'generate_content'
+2026-05-06 19:53:05 [-] services.llm_client WARNING — LLM retry 3: 'NoneType' object has no attribute 'generate_content'
+2026-05-06 19:53:06 [-] services.llm_client ERROR — LLM failed after retries
+2026-05-06 19:53:06 [-] agents.rag INFO — RAGAgent operating in MOCK mode
+2026-05-06 19:53:06 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 1.0
+2026-05-06 19:53:06 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-06 19:53:10 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-06 19:53:10 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-06 19:53:11 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 1.0
+2026-05-06 19:53:11 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-06 19:53:17 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-06 19:53:17 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-06 19:53:18 [-] agents.rag INFO — RAGAgent.run() — question: 'Nganh nghe'
+2026-05-06 19:53:18 [-] services.llm_client WARNING — LLM retry 1: 'NoneType' object has no attribute 'generate_content'
+2026-05-06 19:53:19 [-] services.llm_client WARNING — LLM retry 2: 'NoneType' object has no attribute 'generate_content'
+2026-05-06 19:53:20 [-] services.llm_client WARNING — LLM retry 3: 'NoneType' object has no attribute 'generate_content'
+2026-05-06 19:53:21 [-] services.llm_client ERROR — LLM failed after retries
+2026-05-06 19:53:21 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 1.0
+2026-05-06 19:53:21 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-06 19:53:30 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-06 19:53:30 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-06 19:53:31 [-] agents.rag INFO — RAGAgent.run() — question: 'Nganh nghe nao toi nen chon'
+2026-05-06 19:53:31 [-] services.llm_client WARNING — LLM retry 1: 'NoneType' object has no attribute 'generate_content'
+2026-05-06 19:53:32 [-] services.llm_client WARNING — LLM retry 2: 'NoneType' object has no attribute 'generate_content'
+2026-05-06 19:53:33 [-] services.llm_client WARNING — LLM retry 3: 'NoneType' object has no attribute 'generate_content'
+2026-05-06 19:53:34 [-] services.llm_client ERROR — LLM failed after retries
+2026-05-06 19:53:34 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 1.0
+2026-05-06 19:53:34 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-06 19:53:43 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-06 19:53:43 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-06 19:53:44 [-] agents.advisor INFO — AdvisorAgent.run() called
+2026-05-06 19:53:44 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 1.0
+2026-05-06 19:53:44 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-06 19:54:22 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-06 19:54:22 [-] orchestrator.pipeline INFO — Pipeline operating in MOCK mode
+2026-05-06 19:54:22 [-] agents.advisor INFO — AdvisorAgent.run() called
+2026-05-06 19:54:22 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 1.0
+2026-05-06 19:54:22 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-06 20:14:42 [-] orchestrator.pipeline INFO — run_match for user: [EMAIL]
+2026-05-06 20:14:43 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 1.0
+2026-05-06 20:14:43 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-06 20:14:43 [-] main INFO — Wizard answers indexed for user context: [EMAIL]
+2026-05-07 10:14:33 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 10:14:33 [-] services.rag_service INFO — Initializing RAGService
+2026-05-07 10:14:34 [-] services.rag_service INFO — Re-ingesting all data...
+2026-05-07 10:14:34 [-] services.rag_service INFO — Ingested 0 admission chunks
+2026-05-07 10:14:34 [-] services.rag_service INFO — Ingested 0 FAQ items
+2026-05-07 10:14:35 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 10:16:34 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 10:16:34 [-] services.rag_service INFO — Initializing RAGService
+2026-05-07 10:16:35 [-] services.rag_service INFO — Re-ingesting all data...
+2026-05-07 10:16:35 [-] services.rag_service INFO — Ingested 0 admission chunks
+2026-05-07 10:16:35 [-] services.rag_service INFO — Ingested 0 FAQ items
+2026-05-07 10:16:36 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 10:16:37 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 10:16:37 [-] main INFO — Database initialized on startup
+2026-05-07 10:16:45 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 10:16:45 [-] services.rag_service INFO — Initializing RAGService
+2026-05-07 10:16:45 [-] services.rag_service INFO — Re-ingesting all data...
+2026-05-07 10:16:45 [-] services.rag_service INFO — Ingested 0 admission chunks
+2026-05-07 10:16:45 [-] services.rag_service INFO — Ingested 0 FAQ items
+2026-05-07 10:16:46 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 10:16:47 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 10:16:47 [-] main INFO — Database initialized on startup
+2026-05-07 10:16:56 [-] orchestrator.pipeline INFO — run_chat for user: anonymous, route pending
+2026-05-07 10:16:56 [-] orchestrator.pipeline INFO — Pipeline operating in REAL mode
+2026-05-07 10:16:56 [-] orchestrator.router INFO — Routing message: 'hello...'
+2026-05-07 10:17:00 [-] services.llm_client WARNING — LLM retry 1: Error code: 401 - {'error': {'message': 'Incorrect API key provided: your_ope************here. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+2026-05-07 10:17:02 [-] services.llm_client WARNING — LLM retry 2: Error code: 401 - {'error': {'message': 'Incorrect API key provided: your_ope************here. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+2026-05-07 10:17:03 [-] services.llm_client WARNING — LLM retry 3: Error code: 401 - {'error': {'message': 'Incorrect API key provided: your_ope************here. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+2026-05-07 10:17:04 [-] services.llm_client ERROR — LLM failed after retries
+2026-05-07 10:17:04 [-] orchestrator.router WARNING — Empty LLM response → default to 'rag'
+2026-05-07 10:17:04 [-] agents.rag INFO — RAGAgent.run() — question: 'hello'
+2026-05-07 10:17:04 [req-b8032b13f9c5] utils.observability INFO — [req-b8032b13f9c5] START route=retrieve_and_answer user=anonymous
+2026-05-07 10:17:36 [-] services.llm_client WARNING — LLM retry 1: Error code: 401 - {'error': {'message': 'Incorrect API key provided: your_ope************here. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+2026-05-07 10:17:38 [req-b8032b13f9c5] services.rag_service WARNING — [Timeout] LLM call 'expand_query' exceeded 4s
+2026-05-07 10:17:38 [-] services.llm_client WARNING — LLM retry 2: Error code: 401 - {'error': {'message': 'Incorrect API key provided: your_ope************here. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+2026-05-07 10:17:40 [-] services.llm_client WARNING — LLM retry 3: Error code: 401 - {'error': {'message': 'Incorrect API key provided: your_ope************here. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+2026-05-07 10:17:41 [req-b8032b13f9c5] services.rag_service ERROR — Embedding failed: Error code: 401 - {'error': {'message': 'Incorrect API key provided: your_ope************here. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+2026-05-07 10:17:41 [req-b8032b13f9c5] services.rag_service WARNING — Embedding failed → fallback keyword search
+2026-05-07 10:17:41 [req-b8032b13f9c5] services.rag_service WARNING — No documents retrieved — going straight to fallback
+2026-05-07 10:17:41 [req-b8032b13f9c5] services.rag_service INFO — [Fallback] Using generic fallback response
+2026-05-07 10:17:41 [req-b8032b13f9c5] utils.observability WARNING — TRACE {'event': 'request_trace', 'trace_id': 'req-b8032b13f9c5', 'user_id': 'anonymous', 'route': 'retrieve_and_answer', 'status': 'fallback', 'latency_ms': 36562.0, 'steps_ms': {'expand_query': 4000.0, 'retrieval': 36562.0}, 'retrieved_docs': [], 'llm_errors': [{'type': 'timeout', 'detail': "LLM call 'expand_query' exceeded 4s", 'elapsed_ms': 34297.0}], 'fallback_used': 'generic', 'cost_usd': 0.0, 'token_stats': {}}
+2026-05-07 10:17:41 [-] guards.output_guard INFO — OutputGuard: Redacted PII type '[EMAIL]'
+2026-05-07 10:17:41 [-] agents.judge INFO — JudgeAgent.evaluate() called
+2026-05-07 10:17:41 [-] services.llm_client ERROR — LLM failed after retries
+2026-05-07 10:17:41 [-] services.llm_client WARNING — LLM retry 1: Error code: 401 - {'error': {'message': 'Incorrect API key provided: your_ope************here. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+2026-05-07 10:17:43 [-] services.llm_client WARNING — LLM retry 2: Error code: 401 - {'error': {'message': 'Incorrect API key provided: your_ope************here. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+2026-05-07 10:17:44 [-] services.llm_client WARNING — LLM retry 3: Error code: 401 - {'error': {'message': 'Incorrect API key provided: your_ope************here. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
+2026-05-07 10:17:45 [-] services.llm_client ERROR — LLM failed after retries
+2026-05-07 10:17:45 [-] orchestrator.pipeline WARNING — Judge REJECTED response for user anonymous. Reason: empty_llm_response
+2026-05-07 10:17:45 [-] orchestrator.pipeline INFO — AUDIT [anonymous] judge_pass=False — Score: 0
+2026-05-07 10:17:45 [-] services.db_service INFO — DBService.save_audit_log() — user=anonymous, pass=False [NOT PERSISTED]
+2026-05-07 10:39:48 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 10:39:48 [-] services.rag_service INFO — Initializing RAGService
+2026-05-07 10:39:48 [-] services.rag_service INFO — Re-ingesting all data...
+2026-05-07 10:39:48 [-] services.rag_service INFO — Ingested 0 admission chunks
+2026-05-07 10:39:48 [-] services.rag_service INFO — Ingested 0 FAQ items
+2026-05-07 10:39:49 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 10:39:50 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 10:39:50 [-] main INFO — Database initialized on startup
+2026-05-07 10:40:05 [-] orchestrator.pipeline INFO — run_chat for user: anonymous, route pending
+2026-05-07 10:40:05 [-] orchestrator.pipeline INFO — Pipeline operating in REAL mode
+2026-05-07 10:40:05 [-] orchestrator.router INFO — Routing message: 'hello...'
+2026-05-07 10:40:12 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 6.44s
+2026-05-07 10:40:12 [-] orchestrator.router INFO — [LLM] Routed to: fallback
+2026-05-07 10:40:12 [-] agents.judge INFO — JudgeAgent.evaluate() called
+2026-05-07 10:40:18 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 6.36s
+2026-05-07 10:40:18 [-] agents.judge INFO — Judge Result: pass=True, score=85, reason=The response is appropriate, inviting the user to connect with a counselor, which is relevant for a university admissions chatbot.
+2026-05-07 10:40:18 [-] orchestrator.pipeline INFO — AUDIT [anonymous] judge_pass=True — Score: 85
+2026-05-07 10:40:18 [-] services.db_service INFO — DBService.save_audit_log() — user=anonymous, pass=True [NOT PERSISTED]
+2026-05-07 10:40:37 [-] orchestrator.pipeline INFO — run_chat for user: anonymous, route pending
+2026-05-07 10:40:37 [-] orchestrator.pipeline INFO — Pipeline operating in REAL mode
+2026-05-07 10:40:37 [-] orchestrator.router INFO — Routing message: 'Tôi muốn vào ngành liên quan đến máy tính...'
+2026-05-07 10:40:43 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 5.28s
+2026-05-07 10:40:43 [-] orchestrator.router INFO — [LLM] Routed to: advisor
+2026-05-07 10:40:43 [-] agents.advisor INFO — AdvisorAgent.run() called
+2026-05-07 10:41:02 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 19.72s
+2026-05-07 10:41:02 [-] agents.judge INFO — JudgeAgent.evaluate() called
+2026-05-07 10:41:05 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 2.64s
+2026-05-07 10:41:05 [-] agents.judge INFO — Judge Result: pass=True, score=90, reason=The response provides relevant information about computer-related majors, highlighting specific areas such as Computer Science, Data Science, and Biomedical Engineering. It connects the majors to the user's interest and suggests considerations based on their CV, making it helpful and appropriate for a Vietnamese high school student seeking university admissions advice.
+2026-05-07 10:41:05 [-] orchestrator.pipeline INFO — AUDIT [anonymous] judge_pass=True — Score: 90
+2026-05-07 10:41:05 [-] services.db_service INFO — DBService.save_audit_log() — user=anonymous, pass=True [NOT PERSISTED]
+2026-05-07 10:43:09 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 10:43:09 [-] services.rag_service INFO — Initializing RAGService
+2026-05-07 10:43:09 [-] services.rag_service INFO — Re-ingesting all data...
+2026-05-07 10:43:09 [-] services.rag_service INFO — Ingested 0 admission chunks
+2026-05-07 10:43:09 [-] services.rag_service INFO — Ingested 0 FAQ items
+2026-05-07 10:43:10 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 10:43:11 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 10:43:11 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 10:43:11 [-] main INFO — Database initialized on startup
+2026-05-07 10:44:47 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 10:44:47 [-] services.rag_service INFO — Initializing RAGService
+2026-05-07 10:44:47 [-] services.rag_service INFO — Re-ingesting all data...
+2026-05-07 10:44:47 [-] services.rag_service INFO — Ingested 0 admission chunks
+2026-05-07 10:44:47 [-] services.rag_service INFO — Ingested 0 FAQ items
+2026-05-07 10:44:48 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 10:44:49 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 10:44:49 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 10:44:49 [-] main INFO — Database initialized on startup
+2026-05-07 10:44:59 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 10:44:59 [-] services.rag_service INFO — Initializing RAGService
+2026-05-07 10:44:59 [-] services.rag_service INFO — Re-ingesting all data...
+2026-05-07 10:44:59 [-] services.rag_service INFO — Ingested 0 admission chunks
+2026-05-07 10:44:59 [-] services.rag_service INFO — Ingested 0 FAQ items
+2026-05-07 10:45:00 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 10:45:01 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 10:45:01 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 10:45:01 [-] main INFO — Database initialized on startup
+2026-05-07 10:57:28 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-07 10:57:28 [-] orchestrator.pipeline INFO — Pipeline operating in REAL mode
+2026-05-07 10:57:28 [-] orchestrator.router INFO — Routing message: 'Triển vọng nghề nghiệp...'
+2026-05-07 10:57:31 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 2.97s
+2026-05-07 10:57:31 [-] orchestrator.router INFO — [LLM] Routed to: advisor
+2026-05-07 10:57:31 [-] agents.advisor INFO — AdvisorAgent.run() called
+2026-05-07 10:57:33 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 1.78s
+2026-05-07 10:57:33 [-] agents.judge INFO — JudgeAgent.evaluate() called
+2026-05-07 10:57:36 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 2.87s
+2026-05-07 10:57:36 [-] agents.judge INFO — Judge Result: pass=False, score=10, reason=The response does not provide any relevant information regarding career prospects, rendering it unhelpful and unrelated to the user's question.
+2026-05-07 10:57:36 [-] orchestrator.pipeline WARNING — Judge REJECTED response for user [EMAIL] Reason: The response does not provide any relevant information regarding career prospects, rendering it unhelpful and unrelated to the user's question.
+2026-05-07 10:57:36 [-] guards.output_guard INFO — OutputGuard: Redacted PII type '[EMAIL]'
+2026-05-07 10:57:36 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=False — Score: 10
+2026-05-07 10:57:36 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=False [NOT PERSISTED]
+2026-05-07 10:57:46 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-07 10:57:46 [-] orchestrator.pipeline INFO — Pipeline operating in REAL mode
+2026-05-07 10:57:46 [-] orchestrator.router INFO — Routing message: 'Tôi muốn học nghề y...'
+2026-05-07 10:57:48 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 2.41s
+2026-05-07 10:57:48 [-] orchestrator.router INFO — [LLM] Routed to: advisor
+2026-05-07 10:57:48 [-] agents.advisor INFO — AdvisorAgent.run() called
+2026-05-07 10:57:51 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 2.87s
+2026-05-07 10:57:51 [-] agents.judge INFO — JudgeAgent.evaluate() called
+2026-05-07 10:57:53 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 1.56s
+2026-05-07 10:57:53 [-] agents.judge INFO — Judge Result: pass=False, score=20, reason=The response is incomplete and does not provide any useful information or guidance regarding studying medicine, which is likely the user's intention.
+2026-05-07 10:57:53 [-] orchestrator.pipeline WARNING — Judge REJECTED response for user [EMAIL] Reason: The response is incomplete and does not provide any useful information or guidance regarding studying medicine, which is likely the user's intention.
+2026-05-07 10:57:53 [-] guards.output_guard INFO — OutputGuard: Redacted PII type '[EMAIL]'
+2026-05-07 10:57:53 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=False — Score: 20
+2026-05-07 10:57:53 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=False [NOT PERSISTED]
+2026-05-07 10:58:01 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-07 10:58:01 [-] orchestrator.pipeline INFO — Pipeline operating in REAL mode
+2026-05-07 10:58:01 [-] orchestrator.router INFO — Routing message: 'Còn nghề máy tính...'
+2026-05-07 10:58:02 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 1.37s
+2026-05-07 10:58:02 [-] orchestrator.router INFO — [LLM] Routed to: advisor
+2026-05-07 10:58:02 [-] agents.advisor INFO — AdvisorAgent.run() called
+2026-05-07 10:58:04 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 1.85s
+2026-05-07 10:58:04 [-] agents.judge INFO — JudgeAgent.evaluate() called
+2026-05-07 10:58:06 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 2.18s
+2026-05-07 10:58:06 [-] agents.judge INFO — Judge Result: pass=False, score=10, reason=The response is completely unrelated to the user's question about 'nghề máy tính' (computer profession/career). It does not provide any relevant information or context.
+2026-05-07 10:58:06 [-] orchestrator.pipeline WARNING — Judge REJECTED response for user [EMAIL] Reason: The response is completely unrelated to the user's question about 'nghề máy tính' (computer profession/career). It does not provide any relevant information or context.
+2026-05-07 10:58:06 [-] guards.output_guard INFO — OutputGuard: Redacted PII type '[EMAIL]'
+2026-05-07 10:58:06 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=False — Score: 10
+2026-05-07 10:58:06 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=False [NOT PERSISTED]
+2026-05-07 10:58:21 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-07 10:58:21 [-] orchestrator.pipeline INFO — Pipeline operating in REAL mode
+2026-05-07 10:58:21 [-] orchestrator.router INFO — Routing message: 'Tôi muốn vào ngành liên quan đến máy tính...'
+2026-05-07 10:58:22 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 1.06s
+2026-05-07 10:58:22 [-] orchestrator.router INFO — [LLM] Routed to: advisor
+2026-05-07 10:58:22 [-] agents.advisor INFO — AdvisorAgent.run() called
+2026-05-07 10:58:29 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 7.29s
+2026-05-07 10:58:29 [-] agents.judge INFO — JudgeAgent.evaluate() called
+2026-05-07 10:58:32 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 2.41s
+2026-05-07 10:58:32 [-] agents.judge INFO — Judge Result: pass=True, score=90, reason=The response provides relevant information about computer-related majors that align with the user's interest, offering insights into different fields such as Computer Science, Data Science, and Business Analytics. It encourages the student to consider their skills and background, making it appropriate and helpful for a high school student exploring university options.
+2026-05-07 10:58:32 [-] guards.output_guard INFO — OutputGuard: Redacted PII type '[EMAIL]'
+2026-05-07 10:58:32 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 90
+2026-05-07 10:58:32 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-07 11:04:31 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-07 11:04:31 [-] orchestrator.pipeline INFO — Pipeline operating in REAL mode
+2026-05-07 11:04:31 [-] orchestrator.router INFO — Routing message: 'Tôi muốn tìm hiểu sâu hơn về ngành Khoa học Máy tính...'
+2026-05-07 11:04:32 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 1.38s
+2026-05-07 11:04:32 [-] orchestrator.router INFO — [LLM] Routed to: advisor
+2026-05-07 11:04:32 [-] agents.advisor INFO — AdvisorAgent.run() called
+2026-05-07 11:04:49 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 17.34s
+2026-05-07 11:04:49 [-] agents.judge INFO — JudgeAgent.evaluate() called
+2026-05-07 11:04:52 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 3.00s
+2026-05-07 11:04:52 [-] agents.judge INFO — Judge Result: pass=True, score=95, reason=The response accurately discusses the field of Computer Science and related majors, providing relevant information and encouraging exploration of the subject. It does not contain harmful content, false statistics, or any inappropriate material. The advice is suitable for a Vietnamese high school student interested in university admissions.
+2026-05-07 11:04:52 [-] guards.output_guard INFO — OutputGuard: Redacted PII type '[EMAIL]'
+2026-05-07 11:04:52 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 95
+2026-05-07 11:04:52 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-07 11:08:07 [-] orchestrator.pipeline INFO — run_match for user: [EMAIL]
+2026-05-07 11:08:07 [-] agents.advisor INFO — AdvisorAgent.match_majors() called
+2026-05-07 11:08:15 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 7.97s
+2026-05-07 11:08:15 [-] agents.advisor INFO — Using hardcoded VINUNI_MAJORS_LOOKUP (Mock/Fallback)
+2026-05-07 11:08:15 [-] agents.judge INFO — JudgeAgent.evaluate() called
+2026-05-07 11:08:18 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 2.73s
+2026-05-07 11:08:18 [-] agents.judge INFO — Judge Result: pass=True, score=90, reason=The response is helpful and related to the user's interests, strengths, and dislikes. It provides suitable university majors based on the user's profile, explains the reasons for each choice, and outlines what students in those fields typically do. There is no harmful or misleading information, and it respects the user's academic context.
+2026-05-07 11:08:18 [-] guards.output_guard INFO — OutputGuard: Redacted PII type '[EMAIL]'
+2026-05-07 11:08:18 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 90
+2026-05-07 11:08:18 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-07 11:08:18 [-] main INFO — Student profile persisted to SQL: [EMAIL]
+2026-05-07 11:08:18 [-] services.rag_service INFO — Ingesting CV for user [EMAIL]
+2026-05-07 11:08:18 [-] main ERROR — Failed to ingest wizard answers for user [EMAIL]: Validation error: name: Expected a name containing 3-512 characters from [a-zA-Z0-9._-], starting and ending with a character in [a-zA-Z0-9]. Got: [EMAIL]
+2026-05-07 11:08:21 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-07 11:08:21 [-] orchestrator.pipeline INFO — Pipeline operating in REAL mode
+2026-05-07 11:08:21 [-] orchestrator.router INFO — Routing message: 'Triển vọng nghề nghiệp...'
+2026-05-07 11:08:22 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 0.97s
+2026-05-07 11:08:22 [-] orchestrator.router INFO — [LLM] Routed to: advisor
+2026-05-07 11:08:22 [-] agents.advisor INFO — AdvisorAgent.run() called
+2026-05-07 11:08:27 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 5.16s
+2026-05-07 11:08:27 [-] agents.judge INFO — JudgeAgent.evaluate() called
+2026-05-07 11:08:30 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 2.63s
+2026-05-07 11:08:30 [-] agents.judge INFO — Judge Result: pass=True, score=90, reason=The response provides relevant information about career prospects in various fields related to the user's interests, making it helpful and appropriate for a Vietnamese high school student. It considers different majors and offers insights into how personal experience can enhance job prospects, demonstrating accuracy and support for the user's career guidance.
+2026-05-07 11:08:30 [-] guards.output_guard INFO — OutputGuard: Redacted PII type '[EMAIL]'
+2026-05-07 11:08:30 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 90
+2026-05-07 11:08:30 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-07 11:08:47 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-07 11:08:47 [-] orchestrator.pipeline INFO — Pipeline operating in REAL mode
+2026-05-07 11:08:47 [-] orchestrator.router INFO — Routing message: 'Tôi làm kinh tế, tôi nên chọn ngành nào...'
+2026-05-07 11:08:48 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 1.16s
+2026-05-07 11:08:48 [-] orchestrator.router INFO — [LLM] Routed to: advisor
+2026-05-07 11:08:48 [-] agents.advisor INFO — AdvisorAgent.run() called
+2026-05-07 11:08:49 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 1.16s
+2026-05-07 11:08:49 [-] agents.judge INFO — JudgeAgent.evaluate() called
+2026-05-07 11:08:53 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 3.66s
+2026-05-07 11:08:53 [-] agents.judge INFO — Judge Result: pass=False, score=20, reason=The response is incomplete and does not provide relevant information or suggestions regarding the fields of study related to economics.
+2026-05-07 11:08:53 [-] orchestrator.pipeline WARNING — Judge REJECTED response for user [EMAIL] Reason: The response is incomplete and does not provide relevant information or suggestions regarding the fields of study related to economics.
+2026-05-07 11:08:53 [-] guards.output_guard INFO — OutputGuard: Redacted PII type '[EMAIL]'
+2026-05-07 11:08:53 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=False — Score: 20
+2026-05-07 11:08:53 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=False [NOT PERSISTED]
+2026-05-07 11:09:16 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-07 11:09:16 [-] orchestrator.pipeline INFO — Pipeline operating in REAL mode
+2026-05-07 11:09:16 [-] orchestrator.router INFO — Routing message: 'Tôi muốn chọn ngành nào liên quan đến Business...'
+2026-05-07 11:09:17 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 1.11s
+2026-05-07 11:09:17 [-] orchestrator.router INFO — [LLM] Routed to: advisor
+2026-05-07 11:09:17 [-] agents.advisor INFO — AdvisorAgent.run() called
+2026-05-07 11:09:22 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 5.11s
+2026-05-07 11:09:22 [-] agents.judge INFO — JudgeAgent.evaluate() called
+2026-05-07 11:09:25 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 2.43s
+2026-05-07 11:09:25 [-] agents.judge INFO — Judge Result: pass=True, score=90, reason=The response provides relevant information about business-related majors that align with the user's interest. It includes valid explanations for each major, highlighting their connection to business and offering a score based on suitability. There is no harmful content or fabricated information, making it accurate and appropriate for a Vietnamese high school student.
+2026-05-07 11:09:25 [-] guards.output_guard INFO — OutputGuard: Redacted PII type '[EMAIL]'
+2026-05-07 11:09:25 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 90
+2026-05-07 11:09:25 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-07 11:09:51 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-07 11:09:51 [-] orchestrator.pipeline INFO — Pipeline operating in REAL mode
+2026-05-07 11:09:51 [-] orchestrator.router INFO — Routing message: 'So sánh mức lương...'
+2026-05-07 11:09:51 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 0.82s
+2026-05-07 11:09:51 [-] orchestrator.router INFO — [LLM] Routed to: fallback
+2026-05-07 11:09:51 [-] agents.judge INFO — JudgeAgent.evaluate() called
+2026-05-07 11:09:53 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 1.19s
+2026-05-07 11:09:53 [-] agents.judge INFO — Judge Result: pass=False, score=30, reason=The response is not relevant to the user's question about salary comparison.
+2026-05-07 11:09:53 [-] orchestrator.pipeline WARNING — Judge REJECTED response for user [EMAIL] Reason: The response is not relevant to the user's question about salary comparison.
+2026-05-07 11:09:53 [-] guards.output_guard INFO — OutputGuard: Redacted PII type '[EMAIL]'
+2026-05-07 11:09:53 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=False — Score: 30
+2026-05-07 11:09:53 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=False [NOT PERSISTED]
+2026-05-07 11:13:01 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 11:13:01 [-] services.rag_service INFO — Initializing RAGService
+2026-05-07 11:13:02 [-] services.rag_service INFO — Re-ingesting all data...
+2026-05-07 11:13:02 [-] services.rag_service INFO — Ingested 0 admission chunks
+2026-05-07 11:13:02 [-] services.rag_service INFO — Ingested 0 FAQ items
+2026-05-07 11:13:02 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 11:13:03 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 11:13:03 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 11:13:03 [-] main INFO — Database initialized on startup
+2026-05-07 11:30:45 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 11:30:45 [-] services.rag_service INFO — Initializing RAGService
+2026-05-07 11:30:46 [-] services.rag_service INFO — Re-ingesting all data...
+2026-05-07 11:30:46 [-] services.rag_service INFO — Ingested 0 admission chunks
+2026-05-07 11:30:46 [-] services.rag_service INFO — Ingested 0 FAQ items
+2026-05-07 11:30:46 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 11:30:47 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 11:30:47 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 11:30:47 [-] main INFO — Database initialized on startup
+2026-05-07 11:30:56 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 11:30:56 [-] services.rag_service INFO — Initializing RAGService
+2026-05-07 11:30:57 [-] services.rag_service INFO — Re-ingesting all data...
+2026-05-07 11:30:57 [-] services.rag_service INFO — Ingested 0 admission chunks
+2026-05-07 11:30:57 [-] services.rag_service INFO — Ingested 0 FAQ items
+2026-05-07 11:30:57 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 11:30:58 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 11:30:58 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 11:30:58 [-] main INFO — Database initialized on startup
+2026-05-07 11:31:06 [-] orchestrator.pipeline INFO — run_chat for user: anonymous, route pending
+2026-05-07 11:31:06 [-] orchestrator.pipeline INFO — Pipeline operating in REAL mode
+2026-05-07 11:31:06 [-] orchestrator.router INFO — Routing message: 'Tôi muốn vào ngành liên quan đến máy tính...'
+2026-05-07 11:31:11 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 4.98s
+2026-05-07 11:31:11 [-] orchestrator.router INFO — [LLM] Routed to: advisor
+2026-05-07 11:31:11 [-] agents.advisor INFO — AdvisorAgent.run() called
+2026-05-07 11:31:17 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 6.62s
+2026-05-07 11:31:17 [-] agents.judge INFO — JudgeAgent.evaluate() called
+2026-05-07 11:31:21 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 4.21s
+2026-05-07 11:31:21 [-] agents.judge INFO — Judge Result: pass=True, score=90, reason=The AI response is safe and appropriate for a Vietnamese high school student. It provides relevant information about computer-related majors at VinUni and offers insights based on the user's interest. The response does not contain any harmful or discriminatory content, fabricated statistics, or personal data. It is helpful and on-topic.
+2026-05-07 11:31:21 [-] agents.advisor INFO — Using hardcoded VINUNI_MAJORS_LOOKUP (Mock/Fallback)
+2026-05-07 11:31:21 [-] orchestrator.pipeline INFO — AUDIT [anonymous] judge_pass=True — Score: 90
+2026-05-07 11:31:21 [-] services.db_service INFO — DBService.save_audit_log() — user=anonymous, pass=True [NOT PERSISTED]
+2026-05-07 11:34:09 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 11:34:09 [-] services.rag_service INFO — Initializing RAGService
+2026-05-07 11:34:09 [-] services.rag_service INFO — Re-ingesting all data...
+2026-05-07 11:34:09 [-] services.rag_service INFO — Ingested 0 admission chunks
+2026-05-07 11:34:09 [-] services.rag_service INFO — Ingested 0 FAQ items
+2026-05-07 11:34:10 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 11:34:11 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 11:34:11 [-] services.db_service INFO — DBService initialised with PostgreSQL engine
+2026-05-07 11:34:11 [-] main INFO — Database initialized on startup
+2026-05-07 11:34:11 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-07 11:34:11 [-] orchestrator.pipeline INFO — Pipeline operating in REAL mode
+2026-05-07 11:34:11 [-] orchestrator.router INFO — Routing message: 'Triển vọng nghề nghiệp...'
+2026-05-07 11:34:14 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 3.19s
+2026-05-07 11:34:14 [-] orchestrator.router INFO — [LLM] Routed to: advisor
+2026-05-07 11:34:14 [-] agents.advisor INFO — AdvisorAgent.run() called
+2026-05-07 11:34:23 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 8.62s
+2026-05-07 11:34:23 [-] agents.judge INFO — JudgeAgent.evaluate() called
+2026-05-07 11:34:26 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 3.15s
+2026-05-07 11:34:26 [-] agents.judge INFO — Judge Result: pass=True, score=90, reason=The response provides relevant information about career prospects in fields of study offered at VinUni, emphasizing the importance of these prospects for making educational choices. It details specific majors (Business Analytics, Finance, Data Science) and their career opportunities, which is helpful and appropriate for a Vietnamese high school student considering university admissions.
+2026-05-07 11:34:26 [-] agents.advisor INFO — Using hardcoded VINUNI_MAJORS_LOOKUP (Mock/Fallback)
+2026-05-07 11:34:26 [-] guards.output_guard INFO — OutputGuard: Redacted PII type '[EMAIL]'
+2026-05-07 11:34:26 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 90
+2026-05-07 11:34:26 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-07 11:35:03 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-07 11:35:03 [-] orchestrator.pipeline INFO — Pipeline operating in REAL mode
+2026-05-07 11:35:03 [-] orchestrator.router INFO — Routing message: 'So sánh mức lương...'
+2026-05-07 11:35:05 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 2.01s
+2026-05-07 11:35:05 [-] orchestrator.router INFO — [LLM] Routed to: fallback
+2026-05-07 11:35:05 [-] agents.judge INFO — JudgeAgent.evaluate() called
+2026-05-07 11:35:07 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 1.81s
+2026-05-07 11:35:07 [-] agents.judge INFO — Judge Result: pass=False, score=10, reason=The response is unrelated to the user's question about comparing salary levels.
+2026-05-07 11:35:07 [-] orchestrator.pipeline WARNING — Judge REJECTED response for user [EMAIL] Reason: The response is unrelated to the user's question about comparing salary levels.
+2026-05-07 11:35:07 [-] guards.output_guard INFO — OutputGuard: Redacted PII type '[EMAIL]'
+2026-05-07 11:35:07 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=False — Score: 10
+2026-05-07 11:35:07 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=False [NOT PERSISTED]
+2026-05-07 11:35:22 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-07 11:35:22 [-] orchestrator.pipeline INFO — Pipeline operating in REAL mode
+2026-05-07 11:35:22 [-] orchestrator.router INFO — Routing message: 'Phân tích hồ sơ...'
+2026-05-07 11:35:23 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 1.16s
+2026-05-07 11:35:23 [-] orchestrator.router INFO — [LLM] Routed to: crm
+2026-05-07 11:35:23 [-] agents.crm INFO — CRMAgent.run() — user: [EMAIL]
+2026-05-07 11:35:30 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 6.64s
+2026-05-07 11:35:30 [-] agents.judge INFO — JudgeAgent.evaluate() called
+2026-05-07 11:35:33 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 2.93s
+2026-05-07 11:35:33 [-] agents.judge INFO — Judge Result: pass=True, score=95, reason=The response is helpful, supportive, and relevant to a Vietnamese high school student. It provides a positive analysis of the user's profile, highlighting creativity and interests, and offers to assist further with information on educational programs, making it appropriate and constructive.
+2026-05-07 11:35:33 [-] guards.output_guard INFO — OutputGuard: Redacted PII type '[EMAIL]'
+2026-05-07 11:35:33 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 95
+2026-05-07 11:35:33 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-07 11:35:57 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-07 11:35:57 [-] orchestrator.pipeline INFO — Pipeline operating in REAL mode
+2026-05-07 11:35:57 [-] orchestrator.router INFO — Routing message: 'Triển vọng nghề nghiệp...'
+2026-05-07 11:36:03 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 5.82s
+2026-05-07 11:36:03 [-] orchestrator.router INFO — [LLM] Routed to: advisor
+2026-05-07 11:36:03 [-] agents.advisor INFO — AdvisorAgent.run() called
+2026-05-07 11:36:10 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 6.47s
+2026-05-07 11:36:10 [-] agents.judge INFO — JudgeAgent.evaluate() called
+2026-05-07 11:36:12 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 2.53s
+2026-05-07 11:36:12 [-] agents.judge INFO — Judge Result: pass=True, score=90, reason=The response provides helpful and relevant information about career prospects related to the user's interest in arts and creativity. It suggests university majors that align with the user's interests and explains how they could benefit the user's career path. There is no harmful content, fabrication, or personal data leakage. The response is appropriate for a Vietnamese high school student considering university admissions.
+2026-05-07 11:36:12 [-] guards.output_guard INFO — OutputGuard: Redacted PII type '[EMAIL]'
+2026-05-07 11:36:12 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 90
+2026-05-07 11:36:12 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-07 12:18:34 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-07 12:18:34 [-] orchestrator.pipeline INFO — Pipeline operating in REAL mode
+2026-05-07 12:18:34 [-] orchestrator.router INFO — Routing message: 'Phân tích hồ sơ CV của tôi...'
+2026-05-07 12:18:35 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 1.83s
+2026-05-07 12:18:35 [-] orchestrator.router INFO — [LLM] Routed to: crm
+2026-05-07 12:18:35 [-] agents.crm INFO — CRMAgent.run() — user: [EMAIL]
+2026-05-07 12:18:55 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 19.82s
+2026-05-07 12:18:55 [-] agents.judge INFO — JudgeAgent.evaluate() called
+2026-05-07 12:18:58 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 2.94s
+2026-05-07 12:18:58 [-] agents.judge INFO — Judge Result: pass=True, score=95, reason=The response provides helpful analysis and feedback regarding the user's CV, focusing on artistic interests and strengths that align with potential study fields. It encourages the user to consider relevant academic options, which is appropriate for a high school student preparing for university admissions.
+2026-05-07 12:18:58 [-] guards.output_guard INFO — OutputGuard: Redacted PII type '[EMAIL]'
+2026-05-07 12:18:58 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 95
+2026-05-07 12:18:58 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-07 12:19:29 [-] orchestrator.pipeline INFO — run_match for user: [EMAIL]
+2026-05-07 12:19:29 [-] agents.advisor INFO — AdvisorAgent.match_majors() called
+2026-05-07 12:19:37 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 8.52s
+2026-05-07 12:19:37 [-] agents.judge INFO — JudgeAgent.evaluate() called
+2026-05-07 12:19:40 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 2.71s
+2026-05-07 12:19:40 [-] agents.judge INFO — Judge Result: pass=True, score=90, reason=The response provides relevant and appropriate advice for a Vietnamese high school student interested in art and creativity. It suggests suitable majors based on the user's interests and strengths without any harmful content or inaccuracies. The details about each major are accurate and tailored to the student's preferences.
+2026-05-07 12:19:40 [-] guards.output_guard INFO — OutputGuard: Redacted PII type '[EMAIL]'
+2026-05-07 12:19:40 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 90
+2026-05-07 12:19:40 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]
+2026-05-07 12:19:40 [-] main INFO — Student profile persisted to SQL: [EMAIL]
+2026-05-07 12:19:40 [-] services.rag_service INFO — Ingesting CV for user [EMAIL]
+2026-05-07 12:19:40 [-] main ERROR — Failed to ingest wizard answers for user [EMAIL]: Validation error: name: Expected a name containing 3-512 characters from [a-zA-Z0-9._-], starting and ending with a character in [a-zA-Z0-9]. Got: [EMAIL]
+2026-05-07 12:19:47 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], route pending
+2026-05-07 12:19:47 [-] orchestrator.pipeline INFO — Pipeline operating in REAL mode
+2026-05-07 12:19:47 [-] orchestrator.router INFO — Routing message: 'Phân tích hồ sơ...'
+2026-05-07 12:19:50 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 3.32s
+2026-05-07 12:19:50 [-] orchestrator.router INFO — [LLM] Routed to: crm
+2026-05-07 12:19:50 [-] agents.crm INFO — CRMAgent.run() — user: [EMAIL]
+2026-05-07 12:20:09 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 19.04s
+2026-05-07 12:20:09 [-] agents.judge INFO — JudgeAgent.evaluate() called
+2026-05-07 12:20:12 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 2.95s
+2026-05-07 12:20:12 [-] agents.judge INFO — Judge Result: pass=True, score=95, reason=The AI response provides a thoughtful and relevant analysis based on the user's interests and strengths, focusing on academic pathways related to the arts. It encourages exploration and offers support, all in a respectful manner. No harmful or discriminatory content is present, and it stays on topic.
+2026-05-07 12:20:12 [-] guards.output_guard INFO — OutputGuard: Redacted PII type '[EMAIL]'
+2026-05-07 12:20:12 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] judge_pass=True — Score: 95
+2026-05-07 12:20:12 [-] services.db_service INFO — DBService.save_audit_log() — user=[EMAIL], pass=True [NOT PERSISTED]

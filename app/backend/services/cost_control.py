@@ -9,8 +9,8 @@ What this does:
   - Blocks calls that would exceed budget (fail-fast)
   - Exposes a usage report for monitoring / audit
 
-Pricing constants default to Gemini 1.5 Flash as of 2024.
-Swap them via environment variables or config for other models.
+Pricing constants default to OpenAI GPT-4o-mini as of late 2024.
+Values are USD per 1,000 tokens.
 
 Usage:
     cost_guard = CostController()
@@ -39,8 +39,8 @@ logger = get_logger(__name__)
 # Pricing  (USD per 1 000 tokens — Gemini 1.5 Flash defaults)
 # ---------------------------------------------------------------------------
 
-INPUT_COST_PER_1K  = float(os.getenv("LLM_INPUT_COST_PER_1K",  "0.00035"))
-OUTPUT_COST_PER_1K = float(os.getenv("LLM_OUTPUT_COST_PER_1K", "0.00053"))
+INPUT_COST_PER_1K  = float(os.getenv("LLM_INPUT_COST_PER_1K",  "0.00015"))
+OUTPUT_COST_PER_1K = float(os.getenv("LLM_OUTPUT_COST_PER_1K", "0.00060"))
 
 # ---------------------------------------------------------------------------
 # Budget limits
@@ -57,8 +57,19 @@ MAX_SINGLE_PROMPT_TOKENS = int(os.getenv("MAX_SINGLE_PROMPT_TOKENS", "2000"))
 # Internal helpers
 # ---------------------------------------------------------------------------
 
+try:
+    import tiktoken
+except ImportError:
+    tiktoken = None
+
 def _count_tokens(text: str) -> int:
-    """1 token ≈ 4 characters (whitespace approximation)."""
+    """Count tokens using tiktoken for precision, fallback to approximation."""
+    if tiktoken:
+        try:
+            encoding = tiktoken.get_encoding("cl100k_base")
+            return len(encoding.encode(text))
+        except Exception:
+            pass
     return max(1, len(text) // 4)
 
 

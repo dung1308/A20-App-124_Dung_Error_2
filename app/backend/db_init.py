@@ -9,6 +9,7 @@ Usage:
     
 Options:
     --recreate: Drop all existing tables and recreate them (development only)
+    --seed:     Populate the database with initial major data
 """
 
 import sys
@@ -57,6 +58,15 @@ def main():
         except Exception as e:
             logger.error(f"✗ Failed to initialize database: {e}")
             sys.exit(1)
+
+    # Optional seeding
+    if "--seed" in sys.argv:
+        logger.info("Seeding database...")
+        try:
+            from utils.seed_majors import seed
+            seed()
+        except Exception as e:
+            logger.error(f"✗ Failed to seed database: {e}")
     
     # Verify tables were created
     try:

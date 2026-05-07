@@ -1,26 +1,34 @@
 import time
-from config import get_gemini_model
+import os
+from openai import OpenAI
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
 
 
 class LLMClient:
-    def __init__(self):
-        self.model = get_gemini_model()
+    def __init__(self, model: str = "gpt-4o-mini"):
+        self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        self.model = model
 
-    def generate(self, prompt: str, max_retries=3, timeout=5):
+    def generate(self, prompt: str, max_retries=3, timeout=10):
         for attempt in range(max_retries):
             try:
                 start = time.time()
 
-                response = self.model.generate_content(prompt)
+                response = self.client.chat.completions.create(
+                    model=self.model,
+                    messages=[
+                        {"role": "user", "content": prompt}
+                    ],
+                    timeout=timeout
+                )
 
                 latency = time.time() - start
-                logger.info(f"LLM latency: {latency:.2f}s")
+                logger.info(f"LLM latency ({self.model}): {latency:.2f}s")
 
-                if response and response.text:
-                    return response.text.strip()
+                if response and response.choices:
+                    return response.choices[0].message.content.strip()
 
                 return "I don't know"
 

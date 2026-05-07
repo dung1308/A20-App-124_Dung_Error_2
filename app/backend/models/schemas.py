@@ -13,6 +13,13 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+class Major(Base):
+    """Stores official VinUni major information."""
+    __tablename__ = "majors"
+    id = Column(String, primary_key=True)  # e.g., 'cs', 'ee', 'ba'
+    name = Column(String, nullable=False)
+    description = Column(Text, nullable=True)  # Details on what students do/learn
+
 class ChatMessage(Base):
     """Stores individual chat messages in the conversation history."""
     __tablename__ = "chat_messages"

@@ -21,11 +21,13 @@ class LearningToRank:
 
     def _init_default_weights(self):
         # Fake training so model works before real training
+        # Features: [semantic, keyword_overlap, doc_len, is_cv, is_adm, is_faq]
         X = np.array([
-            [0.9, 3, 1.0, 1],
-            [0.2, 0, 0.5, 0]
+            [0.9, 3, 1.0, 1, 0, 0],
+            [0.8, 2, 0.7, 0, 1, 0],
+            [0.1, 0, 0.1, 0, 0, 0]
         ])
-        y = np.array([1, 0])
+        y = np.array([1, 1, 0])
         self.model.fit(X, y)
 
     def score(self, query: str, doc: str, distance: float, metadata: dict) -> float:

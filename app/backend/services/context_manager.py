@@ -9,13 +9,17 @@ Rules enforced here (single source of truth):
   - Max prompt tokens (context + query + prompt template overhead)
   - Truncation strategy: hard cut vs sentence-boundary cut
 
-Token counting uses a cheap whitespace approximation (1 token ≈ 4 chars / 0.75 words).
-Swap `_count_tokens` for tiktoken or Gemini's own counter when available.
+Token counting uses tiktoken for OpenAI models.
 """
 
 from __future__ import annotations
 
 import re
+try:
+    import tiktoken
+except ImportError:
+    tiktoken = None
+
 from typing import List
 
 from utils.logger import get_logger
@@ -42,12 +46,16 @@ MAX_EXPANDED_QUERY_TOKENS = 60
 
 def _count_tokens(text: str) -> int:
     """
-    Lightweight token estimator: 1 token ≈ 4 characters.
-    Replace with tiktoken / Gemini tokenizer for precision.
+    Count tokens using tiktoken (cl100k_base) for OpenAI.
+    Falls back to whitespace approximation if tiktoken is missing.
     """
+    if tiktoken:
+        try:
+            encoding = tiktoken.get_encoding("cl100k_base")
+            return len(encoding.encode(text))
+        except Exception:
+            pass
     return max(1, len(text) // 4)
-
-
 def _truncate_to_tokens(text: str, max_tokens: int) -> str:
     """
     Truncate text to at most `max_tokens` tokens, cutting at a sentence

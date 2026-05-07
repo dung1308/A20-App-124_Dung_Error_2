@@ -37,6 +37,9 @@ from typing import List, Dict, Any, Tuple, Optional
 import numpy as np
 import chromadb
 
+from chromadb.config import Settings
+
+from openai import OpenAI
 from services.ltr import LearningToRank
 from services.llm_client import LLMClient
 from services.context_manager import ContextManager
@@ -76,19 +79,19 @@ GENERIC_FALLBACK = (
 # ---------------------------------------------------------------------------
 
 QUERY_EXPANSION_PROMPT = (
-    "Rewrite the following student query to be more specific and retrieval-friendly. "
+    "Viết lại câu hỏi sau của học sinh để cụ thể hơn và tối ưu hơn cho việc tìm kiếm thông tin. "
     "Return ONLY the rewritten query, nothing else.\n\n"
     "Original query: {query}\n"
     "Rewritten query:"
 )
 
 ANSWER_GENERATION_PROMPT = (
-    "You are a helpful university admissions advisor for VinUni.\n"
-    "Answer the student's question using ONLY the context below.\n"
-    "If the context does not contain enough information, say so honestly.\n\n"
+    "Bạn là trợ lý tư vấn tuyển sinh của VinUni.\n"
+    "Trả lời câu hỏi của học sinh CHỈ sử dụng thông tin từ Context dưới đây.\n"
+    "Nếu Context không có đủ thông tin, hãy trả lời là bạn chưa có thông tin chính xác.\n\n"
     "Context:\n{context}\n\n"
-    "Student question: {query}\n\n"
-    "Answer:"
+    "Câu hỏi của học sinh: {query}\n\n"
+    "Trả lời:"
 )
 
 # ---------------------------------------------------------------------------
@@ -129,14 +132,24 @@ class RAGService:
             return
 
         # REAL MODE — Chroma
-        self.client         = chromadb.Client()
-        self.collection     = self.client.get_or_create_collection(name="vinuni_docs")
+
+        self.client = chromadb.PersistentClient(
+            path="./chroma_db"
+        )
+        self.admission_collection = self.client.get_or_create_collection(name="admissions")
+        self.faq_collection       = self.client.get_or_create_collection(name="faq")
         self.cv_collections: Dict[str, Any] = {}
         self.reranker       = LearningToRank()
 
-        if self.collection.count() == 0:
-            logger.info("Seeding Chroma with demo corpus...")
-            self._ingest_corpus()
+        self.client.delete_collection("faq")
+        self.faq_collection = self.client.get_or_create_collection(name="faq")
+
+        self.client.delete_collection("admissions")
+        self.admission_collection = self.client.get_or_create_collection(name="admissions")
+
+        logger.info("Re-ingesting all data...")
+        self._ingest_admissions()
+        self.ingest_faq_folder()
 
     # ------------------------------------------------------------------
     # Layer 1: TIMEOUT WRAPPER
@@ -217,6 +230,19 @@ class RAGService:
     # ------------------------------------------------------------------
     # LLM helpers  (layers 1-4, span-aware)
     # ------------------------------------------------------------------
+    def embed_text(self, text: str):
+        if USE_MOCK:
+            return None
+
+        try:
+            response = self.llm.client.embeddings.create(
+                model="text-embedding-3-small",
+                input=text
+            )
+            return response.data[0].embedding
+        except Exception as e:
+            logger.error(f"Embedding failed: {e}")
+            return None
 
     def expand_query(
         self,
@@ -320,13 +346,13 @@ class RAGService:
 
     def retrieve(
         self,
-        query:   str,
-        top_k:   int = 3,
+        query: str,
+        top_k: int = 3,
         user_id: Optional[str] = None,
-        expand:  bool = True,
-        span:    Optional[RequestSpan] = None,
+        expand: bool = True,
+        span: Optional[RequestSpan] = None,
     ) -> List[str]:
-        """Retrieve top-k relevant documents, with optional query expansion."""
+
         retrieval_query = (
             self.expand_query(query, user_id=user_id or "system", span=span)
             if expand else query
@@ -335,31 +361,67 @@ class RAGService:
         if USE_MOCK:
             return self._keyword_search(retrieval_query, top_k)
 
-        query_embedding = embed_text(retrieval_query)
+        # embedding
+        query_embedding = self.embed_text(retrieval_query)
         if query_embedding is None:
+            logger.warning("Embedding failed → fallback keyword search")
             return self._keyword_search(retrieval_query, top_k)
 
+        # query both collections (HYBRID)
         step_ctx = span.step("chroma_query") if span else _noop_context()
         with step_ctx:
-            results = self.collection.query(
-                query_embeddings=[query_embedding],
-                n_results=top_k * 2,
-                include=["documents", "distances", "metadatas"],
-            )
+            try:
+                res_adm = self.admission_collection.query(
+                    query_embeddings=[query_embedding],
+                    n_results=top_k,
+                    include=["documents", "distances", "metadatas"]
+                )
 
-        docs      = results["documents"][0]
-        distances = results["distances"][0]
-        metadatas = results.get("metadatas", [[{}] * len(docs)])[0]
+                res_faq = self.faq_collection.query(
+                    query_embeddings=[query_embedding],
+                    n_results=top_k,
+                    include=["documents", "distances", "metadatas"]
+                )
 
+            except Exception as e:
+                logger.error(f"Chroma query failed: {e}")
+                return self._keyword_search(retrieval_query, top_k)
+
+        # extract safely
+        def safe_extract(res):
+            if not res or "documents" not in res:
+                return [], [], []
+            docs = res.get("documents", [[]])[0] or []
+            dists = res.get("distances", [[]])[0] or []
+            metas = res.get("metadatas", [[]])[0] or [{} for _ in docs]
+            return docs, dists, metas
+
+        docs_adm, dist_adm, meta_adm = safe_extract(res_adm)
+        docs_faq, dist_faq, meta_faq = safe_extract(res_faq)
+
+        # merge (HYBRID CORE)
+        docs = docs_adm + docs_faq
+        distances = dist_adm + dist_faq
+        metadatas = meta_adm + meta_faq
+
+        if not docs:
+            logger.warning("No docs from hybrid → fallback keyword")
+            return self._keyword_search(retrieval_query, top_k)
+
+        # rerank
         rerank_ctx = span.step("reranker") if span else _noop_context()
         with rerank_ctx:
-            reranked = self.reranker.rerank(
-                query=retrieval_query,
-                docs=docs,
-                distances=distances,
-                metadatas=metadatas,
-                top_k=top_k,
-            )
+            try:
+                reranked = self.reranker.rerank(
+                    query=retrieval_query,
+                    docs=docs,
+                    distances=distances,
+                    metadatas=metadatas,
+                    top_k=top_k,
+                )
+            except Exception as e:
+                logger.error(f"Reranker failed: {e}")
+                return docs[:top_k]
 
         return reranked
 
@@ -434,25 +496,31 @@ class RAGService:
             mock_docs = self._keyword_search(query, top_k)
             return [{"text": doc, "distance": 0.1, "metadata": {"source": "mock"}} for doc in mock_docs]
 
-        query_embedding = embed_text(query)
+        query_embedding = self.embed_text(query)
         if query_embedding is None:
             mock_docs = self._keyword_search(query, top_k)
             return [{"text": doc, "distance": 0.1, "metadata": {"source": "mock"}} for doc in mock_docs]
 
         vector_candidates_raw = []
 
-        # Main collection
-        main_res = self.collection.query(
-            query_embeddings=[query_embedding],
-            n_results=top_k,
-            include=["documents", "distances", "metadatas", "embeddings"],
-        )
-        main_docs  = main_res.get("documents", [[]])[0]
-        main_dists = main_res.get("distances",  [[]])[0]
-        main_metas = main_res.get("metadatas",  [[]])[0] or [{} for _ in main_docs]
-        main_embs  = main_res.get("embeddings", [[]])[0] or [None for _ in main_docs]
-        for doc, dist, meta, emb in zip(main_docs, main_dists, main_metas, main_embs):
-            vector_candidates_raw.append((doc, dist, copy.deepcopy(meta), emb))
+        # Main collections (Admissions + FAQ)
+        for collection_name, coll in [
+            ("admissions", self.admission_collection),
+            ("faq", self.faq_collection)
+        ]:
+            res = coll.query(
+                query_embeddings=[query_embedding],
+                n_results=top_k,
+                include=["documents", "distances", "metadatas", "embeddings"],
+            )
+            docs  = res.get("documents", [[]])[0]
+            dists = res.get("distances",  [[]])[0]
+            metas = res.get("metadatas",  [[]])[0] or [{} for _ in docs]
+            embs  = res.get("embeddings", [[]])[0] or [None for _ in docs]
+            for doc, dist, meta, emb in zip(docs, dists, metas, embs):
+                meta_copy = copy.deepcopy(meta)
+                meta_copy.setdefault("source", collection_name)
+                vector_candidates_raw.append((doc, dist, meta_copy, emb))
 
         # CV collection
         if user_id and user_id in self.cv_collections:
@@ -490,19 +558,115 @@ class RAGService:
     # ------------------------------------------------------------------
     # Ingestion
     # ------------------------------------------------------------------
+    def ingest_faq_folder(self, folder_path="data/faq"):
+        import json
+        from pathlib import Path
 
-    def _ingest_corpus(self):
-        ids, documents, embeddings = [], [], []
-        for doc in self.corpus:
-            emb = embed_text(doc["text"])
-            if emb is None:
-                continue
-            ids.append(doc["id"])
-            documents.append(doc["text"])
-            embeddings.append(emb)
+        folder = Path(folder_path)
+
+        ids, documents, embeddings, metadatas = [], [], [], []
+
+        idx = 0
+
+        for file in folder.glob("*.json"):
+            with open(file, "r", encoding="utf-8") as f:
+                data = json.load(f)
+
+            for item in data:
+                q = item.get("question", "")
+                a = item.get("answer", "")
+                section = item.get("section", "")
+                url = item.get("url", "")
+
+                if not q or not a:
+                    continue
+
+                # 👉 rất quan trọng: ưu tiên question
+                text = f"""
+                Question: {q}
+                Answer: {a}
+                """.strip()
+
+                emb = self.embed_text(text)
+                if emb is None:
+                    continue
+
+                ids.append(f"{file.stem}_{item['id']}_{idx}")
+                documents.append(text)
+                embeddings.append(emb)
+
+                metadatas.append({
+                    "type": "faq",
+                    "section": section,
+                    "url": url
+                })
+
+                idx += 1
+
         if ids:
-            self.collection.add(ids=ids, documents=documents, embeddings=embeddings)
-            logger.info(f"Ingested {len(ids)} documents into Chroma")
+            self.faq_collection.add(
+                ids=ids,
+                documents=documents,
+                embeddings=embeddings,
+                metadatas=metadatas
+            )
+
+        logger.info(f"Ingested {len(ids)} FAQ items")
+    def _ingest_admissions(self, data_dir="data/admissions"):
+        import json
+        from pathlib import Path
+
+        data_dir = Path(data_dir)
+
+        ids, documents, embeddings, metadatas = [], [], [], []
+
+        for file in data_dir.glob("*.json"):
+            with open(file, "r", encoding="utf-8") as f:
+                data = json.load(f)
+
+            for item in data:
+                text = item.get("text", "")
+                section = item.get("section", "")
+                source = item.get("source", "")
+                url = item.get("url", "")
+
+                # 👉 enrich text (RẤT QUAN TRỌNG)
+                full_text = f"""
+                Section: {section}
+                Source: {source}
+                Content: {text}
+                """.strip()
+
+                if not full_text:
+                    continue
+
+                chunks = chunk_text(full_text)
+
+                for i, chunk in enumerate(chunks):
+                    emb = self.embed_text(chunk)
+                    if emb is None:
+                        continue
+
+                    ids.append(f"{item['id']}_{i}")
+                    documents.append(chunk)
+                    embeddings.append(emb)
+
+                    metadatas.append({
+                        "type": "admission",
+                        "section": section,
+                        "source": source,
+                        "url": url
+                    })
+
+        if ids:
+            self.admission_collection.add(
+                ids=ids,
+                documents=documents,
+                embeddings=embeddings,
+                metadatas=metadatas
+            )
+
+        logger.info(f"Ingested {len(ids)} admission chunks")
 
     def ingest_cv(self, user_id: str, cv_text: str):
         if USE_MOCK:
@@ -512,7 +676,7 @@ class RAGService:
         chunks = chunk_text(cv_text)
         ids, documents, embeddings = [], [], []
         for i, chunk in enumerate(chunks):
-            emb = embed_text(chunk)
+            emb = self.embed_text(chunk)
             if emb is None:
                 continue
             ids.append(f"{user_id}_{i}")

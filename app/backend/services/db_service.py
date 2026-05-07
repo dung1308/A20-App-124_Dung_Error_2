@@ -19,7 +19,7 @@ from collections import defaultdict
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from config import get_database_url, USE_MOCK
-from models.schemas import User, ChatMessage, ChatSession
+from models.schemas import User, ChatMessage, ChatSession, Major, Student
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -152,8 +152,24 @@ class DBService:
             logger.debug(f"DBService.get_student_profile(MOCK) — user={user_id}, found={profile is not None}")
             return profile
 
-        # TODO: Implement DB read for production
-        return None
+        try:
+            with self.SessionLocal() as session:
+                student = session.query(Student).filter(Student.user_id == user_id).first()
+                if not student:
+                    return None
+                
+                # Build dict from individual columns + profile_data JSON
+                data = {
+                    "gpa": student.gpa,
+                    "preferred_majors": student.preferred_majors,
+                    "test_scores": student.test_scores
+                }
+                if student.profile_data:
+                    data.update(student.profile_data)
+                return data
+        except Exception as e:
+            logger.error(f"DBService.get_student_profile failed: {e}")
+            return None
 
     def upsert_student_profile(self, user_id: str, profile_data: Dict[str, Any]) -> None:
         """
@@ -173,8 +189,31 @@ class DBService:
             logger.debug(f"DBService.upsert_student_profile(MOCK) — user={user_id}")
             return
 
-        # TODO: Implement DB upsert for production
-        return None
+        try:
+            with self.SessionLocal() as session:
+                student = session.query(Student).filter(Student.user_id == user_id).first()
+                
+                # Extract primary table columns if present in profile_data
+                # pop() ensures they don't get duplicated in the JSON column
+                gpa = profile_data.pop("gpa", None)
+                pref = profile_data.pop("preferred_majors", None)
+                scores = profile_data.pop("test_scores", None)
+
+                if student:
+                    if gpa is not None: student.gpa = gpa
+                    if pref is not None: student.preferred_majors = pref
+                    if scores is not None: student.test_scores = scores
+                    student.profile_data = profile_data
+                    student.updated_at = datetime.utcnow()
+                else:
+                    new_student = Student(
+                        user_id=user_id, gpa=gpa, preferred_majors=pref, 
+                        test_scores=scores, profile_data=profile_data
+                    )
+                    session.add(new_student)
+                session.commit()
+        except Exception as e:
+            logger.error(f"DBService.upsert_student_profile failed: {e}")
 
     def create_user_if_not_exists(self, user_id: str) -> None:
         """
@@ -222,3 +261,28 @@ class DBService:
         """
         logger.info(f"DBService.save_audit_log() — user={user_id}, pass={judge_result.get('pass')} [NOT PERSISTED]")
         # TODO: Implement DB write + JSON file append
+
+    def get_majors(self) -> List[Dict[str, Any]]:
+        """
+        Fetch list of available majors from the database.
+        In Mock mode, returns an empty list to trigger hardcoded fallback in agents.
+        """
+        if self.use_mock:
+            return []
+
+        try:
+            with self.SessionLocal() as session:
+                # Use the ORM model to fetch all majors
+                result = session.query(Major).all()
+                
+                majors = []
+                for row in result:
+                    majors.append({
+                        "id": row.id,
+                        "name": row.name,
+                        "description": row.description
+                    })
+                return majors
+        except Exception as e:
+            logger.error(f"Failed to fetch majors from DB: {e}")
+            return []

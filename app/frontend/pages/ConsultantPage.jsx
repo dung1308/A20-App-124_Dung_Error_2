@@ -1,18 +1,31 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '../state/store';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../services/api';
-import LeftPanel from '../components/panels/LeftPanel';
-import UpperPanel from '../components/panels/UpperPanel';
+import { useChat } from '../hooks/useChat';
+
+const majorNameMap = {
+  'cs': 'Khoa học Máy tính',
+  'ee': 'Kỹ thuật Điện — Điện tử',
+  'me': 'Kỹ thuật Cơ khí',
+  'bme': 'Kỹ thuật Y sinh',
+  'ba': 'Quản trị Kinh doanh',
+  'finance': 'Tài chính',
+  'data_science': 'Khoa học Dữ liệu',
+  'liberal_arts': 'Khoa học Xã hội & Nhân văn',
+  'architecture': 'Kiến trúc'
+};
 
 const ConsultantPage = () => {
   const { matchResults, userId, setUserId } = useStore();
-  const [messages, setMessages] = useState(() => {
-    const saved = localStorage.getItem('chat_history');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const { 
+    messages, 
+    setMessages, 
+    sendMessage, 
+    loading: isTyping 
+  } = useChat(userId, 'chat_history');
+
   const [input, setInput] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
+  const [selectedMajor, setSelectedMajor] = useState(null);
   const scrollRef = useRef(null);
 
   // Initialize chat with top results if they exist
@@ -21,13 +34,13 @@ const ConsultantPage = () => {
       setMessages([
         {
           role: 'assistant',
-          content: "Xin chào! Dựa trên năng lực và sở thích bạn đã cung cấp, tôi đã chọn ra 3 ngành học tiềm năng nhất tại VinUni dành cho bạn. Bạn thấy những gợi ý này thế nào?",
+          content: matchResults.answer || "Xin chào! Dựa trên năng lực và sở thích bạn đã cung cấp, tôi đã chọn ra 3 ngành học tiềm năng nhất tại VinUni dành cho bạn.",
           type: 'recommendation',
           data: matchResults.top3
         }
       ]);
     }
-  }, [matchResults, messages.length]);
+  }, [matchResults, messages.length, setMessages]);
 
   // Persist session if store is cleared on refresh
   useEffect(() => {
@@ -37,11 +50,6 @@ const ConsultantPage = () => {
     }
   }, [userId, setUserId]);
 
-  // Persist chat history to localStorage whenever messages change
-  useEffect(() => {
-    localStorage.setItem('chat_history', JSON.stringify(messages));
-  }, [messages]);
-
   // Auto-scroll to bottom
   useEffect(() => {
     if (scrollRef.current) {
@@ -49,49 +57,23 @@ const ConsultantPage = () => {
     }
   }, [messages, isTyping]);
 
-  const handleSend = async (text = input) => {
+  const handleSend = (text = input) => {
     if (!text.trim()) return;
-
-    const userMsg = { role: 'user', content: text };
-    setMessages(prev => [...prev, userMsg]);
-    setInput('');
-    setIsTyping(true);
-
-    try {
-      // Prepare history for API (excluding complex data objects)
-      // Only include role and content to match standard LLM/RAG expectations
-      const history = messages.map(m => ({ 
-        role: String(m.role), 
-        content: String(m.content || "") 
-      }));
-
-      const payload = {
-        userId: String(userId || "anonymous"),
-        text: String(text),
-        history: history
-      };
-
-      // Fallback to anonymous if no userId is present to prevent 422
-      const response = await api.postChat(payload);
-      setMessages(prev => [...prev, { role: 'assistant', content: response.response }]);
-    } catch (error) {
-      setMessages(prev => [...prev, { role: 'assistant', content: "Xin lỗi, tôi gặp chút trục trặc khi kết nối. Bạn có thể thử lại không?" }]);
-    } finally {
-      setIsTyping(false);
-    }
+    sendMessage(text);
+    if (text === input) setInput('');
   };
 
   return (
-    <div className="consultant-layout flex h-screen w-full overflow-hidden bg-[#f8f9ff] font-inter text-[#0d1c2e]">
-      <LeftPanel />
-
-      <div className="flex-1 flex flex-col">
-        <UpperPanel activeLink="consultation" />
-
-        {/* Chat Canvas */}
+    <div className="flex flex-col h-full w-full overflow-hidden bg-[#f8f9ff] font-inter text-[#0d1c2e]">
+      {/* Chat Canvas */}
+      <div className="flex-1 flex flex-col overflow-hidden">
         <main ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-8 md:px-12 lg:px-24 scroll-smooth chat-scrollbar">
           <div className="max-w-4xl mx-auto space-y-8">
-            {messages.map((msg, index) => (
+            {messages.map((msg, index) => {
+              let displayContent = msg.content;
+              let recommendationData = msg.type === 'recommendation' ? msg.data : null;
+
+              return (
               <div key={index} className={`flex gap-4 items-start ${msg.role === 'user' ? 'justify-end' : ''}`}>
                 {msg.role === 'assistant' && (
                   <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0 border border-blue-100">
@@ -105,14 +87,14 @@ const ConsultantPage = () => {
                       ? 'bg-[#003466] text-white rounded-tr-none' 
                       : 'bg-white text-[#0d1c2e] border-slate-200 rounded-tl-none'
                   }`}>
-                    <p className="text-[16px] leading-relaxed">{msg.content}</p>
+                    <p className="text-[16px] leading-relaxed">{displayContent}</p>
                   </div>
 
-                  {/* Recommendation Grid for initial bot message */}
-                  {msg.type === 'recommendation' && (
+                  {/* Recommendation Grid */}
+                  {recommendationData && (
                     <>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {msg.data.map((major, idx) => (
+                        {recommendationData.map((major, idx) => (
                           <div key={idx} className="group bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-xl transition-all duration-300">
                             <div className="flex justify-between items-start mb-4">
                               <div className="p-2 bg-blue-50 rounded-lg text-blue-700">
@@ -120,19 +102,26 @@ const ConsultantPage = () => {
                               </div>
                               <span className="px-2 py-1 bg-green-50 text-green-700 text-[10px] font-bold rounded uppercase tracking-wider">{major.match_score}% Match</span>
                             </div>
-                            <h4 className="font-bold text-blue-900 mb-1">{major.major_name}</h4>
-                            <p className="text-xs text-slate-500 mb-6 leading-relaxed line-clamp-2">{major.match_reason || major.reason}</p>
-                            <button className="w-full py-2.5 bg-slate-50 text-blue-700 font-semibold text-sm rounded-xl group-hover:bg-[#003466] group-hover:text-white transition-colors">Chi tiết</button>
+                            <h4 className="font-bold text-blue-900 mb-1">{major.major_name || majorNameMap[major.major_id] || major.major_id}</h4>
+                            <p className="text-xs text-slate-500 mb-6 leading-relaxed line-clamp-2">{major.match_reason || major.reason || "Xem chi tiết để biết thêm thông tin."}</p>
+                            <button 
+                              onClick={() => setSelectedMajor(major)}
+                              className="w-full py-2.5 bg-slate-50 text-blue-700 font-semibold text-sm rounded-xl group-hover:bg-[#003466] group-hover:text-white transition-colors"
+                            >
+                              Chi tiết
+                            </button>
                           </div>
                         ))}
                       </div>
-                      <div className="bg-blue-50 border-l-4 border-blue-600 p-4 rounded-r-2xl max-w-[85%]">
-                        <div className="flex gap-2 items-center text-blue-900 font-bold mb-1">
-                          <span className="material-symbols-outlined text-[20px]">auto_awesome</span>
-                          <span className="text-sm">Mentor Insight</span>
+                      {msg.type === 'recommendation' && (
+                        <div className="bg-blue-50 border-l-4 border-blue-600 p-4 rounded-r-2xl max-w-[85%]">
+                          <div className="flex gap-2 items-center text-blue-900 font-bold mb-1">
+                            <span className="material-symbols-outlined text-[20px]">auto_awesome</span>
+                            <span className="text-sm">Mentor Insight</span>
+                          </div>
+                          <p className="text-sm text-blue-800 leading-relaxed italic">"Dựa trên hồ sơ của bạn, các ngành kỹ thuật và khoa học máy tính sẽ tận dụng tốt nhất thế mạnh về tư duy logic mà bạn đã thể hiện."</p>
                         </div>
-                        <p className="text-sm text-blue-800 leading-relaxed italic">"Dựa trên hồ sơ của bạn, các ngành kỹ thuật và khoa học máy tính sẽ tận dụng tốt nhất thế mạnh về tư duy logic mà bạn đã thể hiện."</p>
-                      </div>
+                      )}
                     </>
                   )}
                 </div>
@@ -143,7 +132,8 @@ const ConsultantPage = () => {
                   </div>
                 )}
               </div>
-            ))}
+              );
+            })}
 
             {isTyping && (
               <div className="flex gap-4 items-start">
@@ -195,6 +185,55 @@ const ConsultantPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Detail Modal */}
+      {selectedMajor && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-all">
+          <div className="bg-white w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200">
+            <div className="p-8">
+              <div className="flex justify-between items-start mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="p-3 bg-blue-50 rounded-2xl text-blue-700">
+                    <span className="material-symbols-outlined text-3xl">school</span>
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-black text-blue-900">{selectedMajor.major_name || majorNameMap[selectedMajor.major_id]}</h3>
+                    <div className="inline-block px-2 py-0.5 bg-green-50 text-green-700 text-[11px] font-bold rounded uppercase tracking-wider mt-1">
+                      {selectedMajor.match_score}% Match Strength
+                    </div>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setSelectedMajor(null)}
+                  className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-400"
+                >
+                  <span className="material-symbols-outlined">close</span>
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                <div>
+                  <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Tại sao ngành này phù hợp?</h4>
+                  <p className="text-slate-700 leading-relaxed bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                    {selectedMajor.match_reason}
+                  </p>
+                </div>
+
+                <div>
+                  <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Sinh viên VinUni học gì?</h4>
+                  <p className="text-slate-600 leading-relaxed">
+                    {selectedMajor.what_students_do || "Học sinh sẽ được học về các kiến thức chuyên sâu, thực hành dự án thực tế và tham gia các kỳ thực tập tại doanh nghiệp đối tác của VinUni."}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-10">
+                <button onClick={() => { handleSend(`Tôi muốn tìm hiểu sâu hơn về ngành ${selectedMajor.major_name || majorNameMap[selectedMajor.major_id]}`); setSelectedMajor(null); }} className="w-full py-4 bg-[#003466] text-white font-bold rounded-2xl shadow-xl shadow-blue-900/20 hover:scale-[1.02] active:scale-95 transition-all">Hỏi thêm về ngành này</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

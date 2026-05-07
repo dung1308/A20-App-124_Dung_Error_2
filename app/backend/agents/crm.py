@@ -13,8 +13,9 @@ Typical triggers (router → "crm"):
 import logging
 from typing import Optional, Dict, Any
 
-from config import get_gemini_model
+from config import USE_MOCK
 from services.db_service import DBService
+from services.llm_client import LLMClient
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -33,7 +34,7 @@ class CRMAgent:
     """
 
     def __init__(self):
-        self.model = get_gemini_model()
+        self.llm = None if USE_MOCK else LLMClient()
         # TODO: Inject DBService dependency for easier testing
         self.db = DBService()
 
@@ -57,8 +58,35 @@ class CRMAgent:
         """
         logger.info(f"CRMAgent.run() — user: {user_id}")
 
-        # TODO: Remove stub and implement DB fetch + Gemini response
-        return "CRMAgent chưa được implement."
+        try:
+            # 1. Fetch student profile from DB
+            profile = self.get_profile(user_id)
+
+            # 2. Handle missing profile
+            if not profile:
+                return "Mình chưa tìm thấy hồ sơ của bạn trong hệ thống. Bạn có thể cung cấp thêm thông tin hoặc tải lên CV để mình hỗ trợ tốt hơn nhé."
+
+            # 3. Build personalized prompt
+            prompt = self._build_crm_prompt(profile, message)
+
+            # 4. LLM Generation
+            if USE_MOCK:
+                return f"[MOCK CRM] Dựa trên hồ sơ của bạn (GPA: {profile.get('gpa', 'N/A')}), bạn có rất nhiều tiềm năng tại VinUni."
+            
+            if not self.llm:
+                return "Hệ thống tư vấn hiện đang bận, vui lòng thử lại sau."
+
+            response = self.llm.generate(prompt)
+            if not response or response == "I don't know":
+                return "Mình gặp chút vấn đề khi đọc thông tin hồ sơ. Bạn có thể hỏi lại được không?"
+
+            # 5. Return response stripped of whitespace
+            return response.strip()
+
+        # 6. Safety wrapper
+        except Exception as e:
+            logger.error(f"CRMAgent.run failure: {e}")
+            return "Rất tiếc, mình gặp lỗi khi kiểm tra hồ sơ của bạn. Vui lòng thử lại sau nhé."
 
     def get_profile(self, user_id: str) -> Optional[Dict[str, Any]]:
         """
@@ -73,8 +101,7 @@ class CRMAgent:
         TODO: Call db.get_student_profile(user_id).
         TODO: Return None (not raise) if user not found — let caller handle.
         """
-        # TODO: Replace stub with real DB call
-        return None
+        return self.db.get_student_profile(user_id)
 
     # ------------------------------------------------------------------
     # Private helpers

@@ -3,9 +3,9 @@ agents/advisor.py
 -----------------
 Responsibility: AdvisorAgent handles two tasks:
   1. match_majors(answers) → Top 3 VinUni majors from the wizard flow.
-  2. run(message, history)  → Personalized guidance in free-form chat.
+  2. run(message, history, user_id)  → Personalized guidance in free-form chat.
 
-Uses get_gemini_model() from config.py (hinge rule — never imports genai directly).
+Uses LLMClient (OpenAI).
 Validates that returned major IDs exist in the 9-item VINUNI_MAJORS list.
 Returns fallback=True if Gemini output is ambiguous or cannot be validated.
 """
@@ -14,7 +14,9 @@ import json
 import logging
 from typing import List, Dict, Any
 
-from config import get_gemini_model, USE_MOCK
+from config import USE_MOCK
+from services.llm_client import LLMClient
+from services.db_service import DBService
 from models.cv_schema import CVSignals
 from utils.logger import get_logger
 
@@ -46,7 +48,8 @@ cs, ee, me, bme, ba, finance, data_science, liberal_arts, architecture
 
 Yêu cầu:
 1. Trả về JSON thuần — không markdown, không giải thích ngoài JSON.
-2. match_reason phải giải thích rõ ràng dựa trên 2 nguồn:
+2. 'answer' là lời phản hồi tự nhiên, thân thiện dẫn dắt học sinh bằng tiếng Việt.
+3. match_reason phải giải thích rõ ràng dựa trên 2 nguồn:
    - 'Dựa trên lựa chọn của bạn': Liên kết với Interests/Strengths/Work-style từ Wizard.
    - 'Dựa trên hồ sơ (CV)': Liên kết với kinh nghiệm/kỹ năng/thành tựu từ CV (nếu có).
 3. Nếu dislikes mâu thuẫn với ngành → không chọn ngành đó.
@@ -61,7 +64,7 @@ Yêu cầu:
 6. PHÁT HIỆN MÂU THUẪN: Nếu phát hiện mâu thuẫn giữa nền tảng trong CV và sở thích thực tế của học sinh (ngay cả với các ngành không được chọn), hãy đề cập ngắn gọn sự mâu thuẫn này trong phần giải thích của ngành phù hợp nhất để thể hiện sự khách quan.
 
 Format bắt buộc:
-{"top3": [{"major_id": "...", "match_reason": "...", "match_score": 0}], "fallback": false}
+{"answer": "...", "top3": [{"major_id": "...", "match_reason": "...", "match_score": 0}], "fallback": false}
 """
 
 
@@ -71,8 +74,40 @@ class AdvisorAgent:
     """
 
     def __init__(self):
-        # TODO: Store model reference at init to avoid repeated config lookups
-        self.model = get_gemini_model()
+        self.llm = None if USE_MOCK else LLMClient()
+        self.db = DBService()
+        self._majors_cache = None
+
+    def _get_majors_lookup(self) -> Dict[str, Dict]:
+        """
+        Dynamic lookup: returns DB data if available, otherwise defaults to hardcoded lookup.
+        """
+        if self._majors_cache:
+            return self._majors_cache
+
+        # Try to get from Database
+        db_majors = self.db.get_majors()
+        
+        if not db_majors:
+            logger.info("Using hardcoded VINUNI_MAJORS_LOOKUP (Mock/Fallback)")
+            self._majors_cache = VINUNI_MAJORS_LOOKUP
+            return self._majors_cache
+
+        # Transform DB rows into the expected lookup format
+        lookup = {}
+        for m in db_majors:
+            m_id = m["id"]
+            lookup[m_id] = {
+                "name": m["name"],
+                "what_students_do": m.get("description", "Thông tin đang được cập nhật.")
+            }
+        
+        self._majors_cache = lookup
+        return lookup
+
+    def _get_valid_ids(self) -> set:
+        """Returns set of valid major IDs from the current lookup."""
+        return set(self._get_majors_lookup().keys())
 
     def match_majors(self, answers: Dict[str, Any], cv_signals: CVSignals = None) -> Dict[str, Any]:
         """
@@ -108,25 +143,31 @@ class AdvisorAgent:
             # TODO: 1. Build user prompt from answers using _build_match_prompt(answers).
             prompt = self._build_match_prompt(answers, cv_signals)
 
-            # TODO: 2. Call self.model.generate_content(prompt).
-            if not self.model: return {"top3": [], "fallback": True}
-            response = self.model.generate_content(prompt)
+            # 2. Call self.llm.generate(prompt).
+            if not self.llm: return {"top3": [], "fallback": True}
+            response_text = self.llm.generate(prompt)
 
-            # TODO: 3. Parse JSON response — catch json.JSONDecodeError → return fallback.
-            clean_text = response.text.strip()
+            if not response_text or response_text == "I don't know":
+                return {"top3": [], "fallback": True}
+
+            # 3. Parse JSON response — catch json.JSONDecodeError → return fallback.
+            clean_text = response_text.strip()
             if clean_text.startswith("```"):
                 clean_text = clean_text.split("```")[1].replace("json", "", 1).strip()
             data = json.loads(clean_text)
 
-            # TODO: 4. Validate every major_id is in VALID_IDS — reject unknowns → fallback.
-            # TODO: 5. Enrich each item with major_name + what_students_do from VINUNI_MAJORS_LOOKUP.
+            # Dynamic validation and enrichment using DB/Fallback lookup
             enriched = self._validate_and_enrich(data.get("top3", []))
 
-            # TODO: 6. Sort top3 by match_score descending before returning.
+            # 6. Sort top3 by match_score descending before returning.
             enriched.sort(key=lambda x: x.get("match_score", 0), reverse=True)
 
-            # TODO: 7. Wrap all LLM + parse logic in try/except → return fallback on any error.
-            return {"top3": enriched, "fallback": data.get("fallback", False)}
+            # 7. Wrap all LLM + parse logic in try/except → return fallback on any error.
+            return {
+                "answer": data.get("answer"),
+                "top3": enriched,
+                "fallback": data.get("fallback", False)
+            }
         except (json.JSONDecodeError, ValueError, Exception) as e:
             logger.error(f"AdvisorAgent.match_majors failed: {e}")
             return {"top3": [], "fallback": True}
@@ -134,7 +175,7 @@ class AdvisorAgent:
         # TODO: Remove stub and implement Gemini call + validation
         return {"top3": [], "fallback": True}
 
-    def run(self, message: str, history: List[Dict[str, Any]]) -> str:
+    def run(self, message: str, history: List[Dict[str, Any]], user_id: str = None) -> str:
         """
         Free-form advisor chat: personalized guidance on major choice.
         Called by Pipeline when router returns "advisor".
@@ -142,6 +183,7 @@ class AdvisorAgent:
         Args:
             message: User question about which major to choose.
             history: Prior conversation turns for context.
+            user_id: Student identifier for personalized context.
 
         Returns:
             Guidance text in Vietnamese.
@@ -167,14 +209,17 @@ class AdvisorAgent:
             ])
             prompt = f"{MATCH_SYSTEM_PROMPT}\n\nLịch sử trò chuyện:\n{hist_ctx}\n\nCâu hỏi: {message}"
 
-            # TODO: 2. Call self.model.generate_content(prompt).
-            if not self.model: return "Hệ thống đang bận. Vui lòng thử lại sau."
-            response = self.model.generate_content(prompt)
+            # 2. Call self.llm.generate(prompt).
+            if not self.llm: return "Hệ thống đang bận. Vui lòng thử lại sau."
+            response_text = self.llm.generate(prompt)
 
-            # TODO: 3. Return response.text, stripped of leading/trailing whitespace.
-            return response.text.strip()
+            if not response_text or response_text == "I don't know":
+                return "Tôi xin lỗi, tôi chưa thể đưa ra lời khuyên lúc này. Bạn có thể hỏi cụ thể hơn không?"
 
-        # TODO: 4. Wrap in try/except → return polite error string on failure.
+            # 3. Return response_text, stripped of leading/trailing whitespace.
+            return response_text.strip()
+
+        # 4. Wrap in try/except → return polite error string on failure.
         except Exception as e:
             logger.error(f"AdvisorAgent.run failure: {e}")
             return "Tôi xin lỗi, tôi gặp vấn đề khi xử lý câu hỏi này. Bạn có thể hỏi lại về các ngành học tại VinUni không?"
@@ -212,20 +257,13 @@ class AdvisorAgent:
 
         cv_summary = ""
         if cv_signals:
-            # Fix: Handle cv_signals as either an object or a dictionary
-            is_dict = isinstance(cv_signals, dict)
-            evidence = cv_signals.get("evidence", []) if is_dict else getattr(cv_signals, "evidence", [])
-            suggested_list = cv_signals.get("suggested_majors", []) if is_dict else getattr(cv_signals, "suggested_majors", [])
-            confidence = cv_signals.get("confidence", 0) if is_dict else getattr(cv_signals, "confidence", 0)
+            evidence = cv_signals.evidence
+            suggested_list = cv_signals.suggested_majors
+            confidence = cv_signals.confidence
 
             evidence_str = "\n- ".join(evidence) if evidence else "Không có thông tin cụ thể."
             suggested = ", ".join(suggested_list)
-            cv_summary = (
-                f"\n\nTín hiệu từ CV (Dùng để tham khảo thêm):\n"
-                f"- Độ tin cậy (Confidence): {confidence}\n"
-                f"- Các ngành gợi ý từ CV: {suggested}\n"
-                f"- Minh chứng: {evidence_str}"
-            )
+            cv_summary = f"\n\nTín hiệu từ CV (Dùng để tham khảo thêm):\n- Độ tin cậy (Confidence): {confidence:.2f}\n- Các ngành gợi ý từ CV: {suggested}\n- Minh chứng: {evidence_str}"
 
         return f"{MATCH_SYSTEM_PROMPT}\n\nDưới đây là thông tin của học sinh:\n{user_summary}{cv_summary}"
 
@@ -238,18 +276,17 @@ class AdvisorAgent:
 
         Returns:
             Enriched list, or raises ValueError if any major_id is invalid.
-
-        TODO: For each item, check major_id in VALID_IDS — raise ValueError if not.
-        TODO: Look up major_name and what_students_do from VINUNI_MAJORS_LOOKUP.
-        TODO: Merge into the item dict and return.
         """
         enriched = []
+        lookup = self._get_majors_lookup()
+        valid_ids = self._get_valid_ids()
+
         for item in top3:
             major_id = item.get("major_id")
-            # TODO: Remove pass and implement validation + enrichment
-            if major_id not in VALID_IDS:
+            if major_id not in valid_ids:
                 raise ValueError(f"Invalid major_id returned by AI: {major_id}")
-            info = VINUNI_MAJORS_LOOKUP[major_id]
+            
+            info = lookup[major_id]
             # Mapping keys to match MajorResult pydantic schema
             enriched.append({
                 "major_id": major_id,
