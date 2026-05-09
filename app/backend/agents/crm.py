@@ -38,7 +38,7 @@ class CRMAgent:
         # TODO: Inject DBService dependency for easier testing
         self.db = DBService()
 
-    def run(self, user_id: str, message: str) -> str:
+    def run(self, user_id: str, message: str, history: list = None) -> str:
         """
         Retrieve student profile and answer a profile-related question.
 
@@ -67,7 +67,7 @@ class CRMAgent:
                 return "Mình chưa tìm thấy hồ sơ của bạn trong hệ thống. Bạn có thể cung cấp thêm thông tin hoặc tải lên CV để mình hỗ trợ tốt hơn nhé."
 
             # 3. Build personalized prompt
-            prompt = self._build_crm_prompt(profile, message)
+            prompt = self._build_crm_prompt(profile, message, history)
 
             # 4. LLM Generation
             if USE_MOCK:
@@ -107,12 +107,13 @@ class CRMAgent:
     # Private helpers
     # ------------------------------------------------------------------
 
-    def _build_crm_prompt(self, profile: Dict[str, Any], question: str) -> str:
+    def _build_crm_prompt(self, profile: Dict[str, Any], question: str, history: list = None) -> str:
         """
         Format a student profile dict into a readable prompt block.
 
         Args:
             profile:  Dict with student fields (gpa, ielts, interests, etc.).
+            history:  Optional recent conversation turns.
             question: User's question.
 
         Returns:
@@ -124,4 +125,12 @@ class CRMAgent:
         """
         # TODO: Implement formatted profile serialisation
         formatted = "\n".join(f"{k}: {v}" for k, v in profile.items())
-        return f"{CRM_SYSTEM_PROMPT}\n\nHồ sơ học sinh:\n{formatted}\n\nCâu hỏi: {question}"
+
+        hist_ctx = ""
+        if history:
+            hist_ctx = "\n\nLịch sử trò chuyện gần đây:\n" + "\n".join([
+                f"{'Học sinh' if t.get('role')=='user' else 'Trợ lý'}: {t.get('content')}" 
+                for t in history[-5:]
+            ])
+
+        return f"{CRM_SYSTEM_PROMPT}\n\nHồ sơ học sinh:\n{formatted}{hist_ctx}\n\nCâu hỏi: {question}"

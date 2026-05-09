@@ -80,22 +80,22 @@ class Pipeline:
         Returns:
             Dict with keys: top3 (list), fallback (bool), disclaimer (str).
 
-        TODO: 1. input_guard.check(str(answers)) — raise HTTPException 400 if blocked.
-        TODO: 2. rate_limiter.allow(user_id)     — raise HTTPException 429 if exceeded.
-        TODO: 3. raw_result = advisor.match_majors(answers).
-        TODO: 4. safe_result = output_guard.redact(raw_result["disclaimer"] + str(raw_result)).
-        TODO: 5. judge_result = judge.evaluate(str(answers), str(raw_result)).
-        TODO: 6. If judge_result["pass"] is False → return fallback response.
-        TODO: 7. audit_log(user_id, answers, raw_result, judge_result).
-        TODO: 8. Return raw_result enriched with disclaimer.
         """
         logger.info(f"run_match for user: {user_id}")
+        start_time = time.time()
+
+        # 1. Input Guard & Rate Limiter
+        self.input_guard.check(str(answers))
+        if not self.rate_limiter.allow(user_id):
+            from fastapi import HTTPException
+            raise HTTPException(status_code=429, detail="Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau.")
 
         try:
             if USE_MOCK:
                 # Simulate realistic processing time for demo mode
                 time.sleep(1.0)
                 judge_result = {"pass": True, "score": 1.0}
+                route = "advisor"
                 # Deterministic mock advisor result
                 raw_result = {
                     "top3": [
@@ -110,25 +110,29 @@ class Pipeline:
                     "fallback": False
                 }
             else:
-                # 1. Process CV if provided (sanitization happens inside parser)
+                # 2. Process CV if provided
                 if not cv_signals:
                     if cv_text:
-                        cv_data = self.cv_parser.parse(cv_text)
-                        if cv_data:
-                            cv_signals = self.cv_agent.generate_signals(cv_data)
+                        cv_signals = self.cv_agent.analyze(cv_text)
+                
+                route = "advisor"
 
                 # 2. Match majors using AdvisorAgent
                 raw_result = self.advisor.match_majors(answers, cv_signals)
                 # 3. Safety check with JudgeAgent (Only in real mode)
                 judge_result = self.judge.evaluate(str(answers), str(raw_result))
 
-            if not judge_result.get("pass", False):
+            is_safe = judge_result.get("pass", False)
+            latency = int((time.time() - start_time) * 1000)
+
+            if not is_safe:
                 logger.warning(f"Judge rejected match result for {user_id}")
+                self._audit_log(user_id, answers, "REJECTED", judge_result, route=route, response_time_ms=latency, ai_resolved=False, fallback=True)
                 return {"top3": [], "fallback": True, "disclaimer": DISCLAIMER}
 
             # 4. Audit logging
             try:
-                self._audit_log(user_id, answers, raw_result, judge_result)
+                self._audit_log(user_id, answers, raw_result, judge_result, route=route, response_time_ms=latency, ai_resolved=True, fallback=False)
             except Exception as audit_err:
                 logger.error(f"Audit log failed (non-blocking): {audit_err}")
 
@@ -143,12 +147,7 @@ class Pipeline:
         Extract structured signals from CV text.
         """
         try:
-            cv_data = self.cv_parser.parse(text)
-            if not cv_data:
-                return None
-            
-            signals = self.cv_agent.generate_signals(cv_data)
-            return signals
+            return self.cv_agent.analyze(text)
         except Exception as e:
             logger.error(f"Pipeline parse_cv failure: {e}")
             return None
@@ -162,6 +161,8 @@ class Pipeline:
         user_id: str,
         message: str,
         history: List[Dict[str, str]],
+        session_id: Optional[str] = None,
+        persona_summary: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Full pipeline for POST /api/chat (free-form follow-up).
@@ -175,21 +176,22 @@ class Pipeline:
         Returns:
             Dict with keys: response (str), agent (str).
 
-        TODO: 1. input_guard.check(message)      — raise HTTPException 400 if blocked.
-        TODO: 2. rate_limiter.allow(user_id)      — raise HTTPException 429 if exceeded.
-        TODO: 3. route = router.route(message, history).
-        TODO: 4. raw_response = _dispatch(route, user_id, message, history).
-        TODO: 5. safe_response = output_guard.redact(raw_response).
-        TODO: 6. judge_result = judge.evaluate(message, safe_response).
-        TODO: 7. If judge_result["pass"] is False → return fallback string.
-        TODO: 8. audit_log(user_id, message, safe_response, judge_result).
-        TODO: 9. Return {"response": safe_response, "agent": route}.
         """
-        logger.info(f"run_chat for user: {user_id}, route pending")
+        logger.info(f"run_chat for user: {user_id}, session: {session_id}")
+        start_time = time.time()
         
+        # 1. Input Guard & Rate Limiter
+        self.input_guard.check(message)
+        if not self.rate_limiter.allow(user_id):
+            from fastapi import HTTPException
+            raise HTTPException(status_code=429, detail="Tần suất gửi tin nhắn quá nhanh. Vui lòng đợi giây lát.")
+
+        # 0. Save user message to database (This triggers auto-rename in db_service)
+        new_title = self.db_service.save_message(user_id, "user", message, session_id=session_id)
+
         # Initialize default judge result to prevent unbound errors
         judge_result = {"pass": True, "score": 1.0}
-
+        
         try:
             if USE_MOCK:
                 logger.info("Pipeline operating in MOCK mode")
@@ -203,25 +205,33 @@ class Pipeline:
                 route = self.router.route(message, history)
             
             # 2. Dispatch (Real or Mock) with safe history
-            raw_response = self._dispatch(route, user_id, message, history)
+            raw_response = self._dispatch(route, user_id, message, history, persona_summary=persona_summary)
             safe_response = self.output_guard.redact(raw_response)
+
+            # 2.5 Save assistant response to database
+            self.db_service.save_message(user_id, "assistant", safe_response, agent_type=route, session_id=session_id)
             
             # 3. Safety check (Only in real mode)
             if not USE_MOCK:
                 judge_result = self.judge.evaluate(message, safe_response)
             
-            if not judge_result.get("pass", False):
+            is_safe = judge_result.get("pass", False)
+            latency = int((time.time() - start_time) * 1000)
+            
+            if not is_safe:
                 logger.warning(f"Judge REJECTED response for user {user_id}. Reason: {judge_result.get('reason', 'Safety violation or API error')}")
                 safe_response = "Tôi xin lỗi, nhưng tôi không thể trả lời câu hỏi này vì lý do an toàn. Bạn có câu hỏi nào khác về VinUni không?"
                 route = "fallback"
             
-            status = "success" if judge_result.get("pass", False) else "rejected"
+            status = "success" if is_safe else "rejected"
             
             response_data = {
                 "response": safe_response,
                 "intent": route,
                 "status": status,
-                "major": None
+                "major": None,
+                "sessionId": session_id,
+                "sessionTitle": new_title
             }
 
             # If route is advisor, extract structured data for the frontend cards
@@ -240,7 +250,7 @@ class Pipeline:
                 except Exception as e:
                     logger.warning(f"Structured advisor parsing failed: {e}")
 
-            self._audit_log(user_id, message, safe_response, judge_result)
+            self._audit_log(user_id, message, safe_response, judge_result, route=route, response_time_ms=latency, ai_resolved=is_safe, fallback=(route == "fallback"))
             return response_data
 
         except Exception as e:
@@ -261,6 +271,7 @@ class Pipeline:
         user_id: str,
         message: str,
         history: List[Dict[str, Any]],
+        persona_summary: Optional[str] = None,
     ) -> str:
         """
         Call the correct agent based on router output.
@@ -285,15 +296,15 @@ class Pipeline:
             return "Bạn muốn được kết nối với tư vấn viên của chúng tôi không?"
         
         if route == "advisor":
-            return self.advisor.run(message, history, user_id=user_id)
+            return self.advisor.run(message, history, user_id=user_id, persona_summary=persona_summary)
         elif route == "crm":
-            return self.crm.run(user_id, message)
+            return self.crm.run(user_id, message, history=history)
         elif route == "rag":
-            return self.rag.run(message, user_id=user_id)
+            return self.rag.run(message, history=history, user_id=user_id, persona_summary=persona_summary)
         
         # Default: rag
         logger.warning(f"Unknown route '{route}'. Falling back to RAG.")
-        return self.rag.run(message)
+        return self.rag.run(message, history=history, user_id=user_id, persona_summary=persona_summary)
 
     def _mock_route(self, message: str) -> str:
         """Deterministic keyword-based router for Mock mode."""
@@ -310,24 +321,24 @@ class Pipeline:
         input_data: Any,
         output_data: Any,
         judge_result: Dict,
+        route: str = None,
+        response_time_ms: int = None,
+        ai_resolved: bool = True,
+        fallback: bool = False
     ) -> None:
-        # Redact PII from input_data before logging
-        redacted_input_data = self.output_guard.redact(str(input_data))
-        # Redact PII from user_id if it's an email or phone number
-        redacted_user_id = self.output_guard.redact(user_id)
-
         """
         Persist an audit record to the database.
-
-        Args:
-            user_id:      Student identifier.
-            input_data:   Raw input (answers dict or message string).
-            output_data:  Agent output before/after redaction.
-            judge_result: Result dict from JudgeAgent.evaluate().
-
-        TODO: Call db_service.save_audit_log(user_id, input_data, output_data, judge_result).
-        TODO: Also append to audit_log.json for file-based compliance trail.
         """
-        # TODO: Implement DB + file audit logging
-        logger.info(f"AUDIT [{user_id}] judge_pass={judge_result.get('pass')} — Score: {judge_result.get('score')}")
-        self.db_service.save_audit_log(user_id, str(input_data), str(output_data), judge_result)
+        redacted_input = self.output_guard.redact(str(input_data))
+        
+        logger.info(f"AUDIT [{user_id}] route={route} pass={judge_result.get('pass')} latency={response_time_ms}ms")
+        self.db_service.save_audit_log(
+            user_id=user_id, 
+            input_text=redacted_input, 
+            output_text=str(output_data), 
+            judge_result=judge_result,
+            route=route,
+            response_time_ms=response_time_ms,
+            ai_resolved=ai_resolved,
+            fallback=fallback
+        )

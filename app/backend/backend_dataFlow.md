@@ -31,7 +31,7 @@ Every incoming request to `/api/match` or `/api/chat` passes through:
     - **RAG Agent**: Fetches context from `DEMO_CORPUS` via `RAGService` (Keyword overlap in Mock; Vector search in Production) and generates a grounded response.
     - **Advisor Agent**: Provides personalized chat-based guidance using conversation history.
     - **CRM Agent**: Interacts with `DBService` to fetch or update student profile data.
-3.  **Handoff**: If the route is `fallback`, the system returns a prompt for human consultant connection.
+3.  **Handoff**: If the route is `fallback` or the response is rejected by safety filters, a **Human Handoff Summary** is generated (Profile + Recent History) and sent via `HUMAN_WEBHOOK` for human intervention.
 
 ---
 
@@ -41,7 +41,7 @@ Before the response is sent back to the user:
 2.  **JudgeAgent**: Performs a final safety audit. If the judge rejects the response, a "Safety Fallback" message is returned instead.
 3.  **Persistence (`DBService`)**:
     - **Chat History**: Messages are saved to the `ChatMessage` table (PostgreSQL) or a runtime dictionary (Mock).
-    - **Audit Log**: The orchestrator records the input, output, and judge result for compliance.
+    - **Audit Log**: The orchestrator records input, output, judge result, route, and **PMF metrics** (response time, resolution status, fallback trigger) for compliance and performance analysis.
 
 ---
 

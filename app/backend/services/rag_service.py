@@ -80,7 +80,9 @@ GENERIC_FALLBACK = (
 
 QUERY_EXPANSION_PROMPT = (
     "Viết lại câu hỏi sau của học sinh để cụ thể hơn và tối ưu hơn cho việc tìm kiếm thông tin. "
+    "Sử dụng lịch sử trò chuyện để giải quyết các đại từ hoặc ngữ cảnh bị thiếu. "
     "Return ONLY the rewritten query, nothing else.\n\n"
+    "Lịch sử trò chuyện:\n{history}\n"
     "Original query: {query}\n"
     "Rewritten query:"
 )
@@ -247,16 +249,23 @@ class RAGService:
     def expand_query(
         self,
         query:   str,
+        history: List[Dict[str, Any]] = None,
         user_id: str = "system",
         span:    Optional[RequestSpan] = None,
     ) -> str:
         """
         Rewrite the query for better retrieval coverage.
         Best-effort: any failure silently returns the original query.
-
-        Layers: cost gate → timeout → context validation.
         """
-        prompt = QUERY_EXPANSION_PROMPT.format(query=query)
+        # Format history turns for context
+        history_text = ""
+        if history:
+            history_text = "\n".join([
+                f"{'Học sinh' if t.get('role')=='user' else 'Trợ lý'}: {t.get('content')}" 
+                for t in history[-3:] # Use last 3 turns for context
+            ])
+
+        prompt = QUERY_EXPANSION_PROMPT.format(query=query, history=history_text or "Không có lịch sử.")
 
         # Layer 4: cost gate
         if not self.cost.allow(user_id, prompt, estimated_output_tokens=30, call_type="expand_query"):
@@ -351,10 +360,11 @@ class RAGService:
         user_id: Optional[str] = None,
         expand: bool = True,
         span: Optional[RequestSpan] = None,
+        history: List[Dict[str, Any]] = None,
     ) -> List[str]:
 
         retrieval_query = (
-            self.expand_query(query, user_id=user_id or "system", span=span)
+            self.expand_query(query, user_id=user_id or "system", span=span, history=history)
             if expand else query
         )
 
@@ -433,6 +443,7 @@ class RAGService:
         self,
         query:   str,
         top_k:   int = 3,
+        history: List[Dict[str, Any]] = None,
         user_id: Optional[str] = None,
     ) -> str:
         """
@@ -454,7 +465,7 @@ class RAGService:
             with span.step("retrieval"):
                 docs = self.retrieve(
                     query, top_k=top_k, user_id=_user_id,
-                    expand=True, span=span,
+                    expand=True, span=span, history=history
                 )
 
             # Record what we retrieved for debugging

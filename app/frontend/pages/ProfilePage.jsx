@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-
+import api from '../services/api'; // Use the configured axios instance
+import LoadingSpinner from '../components/LoadingSpinner';
+import { useAuth } from '../context/AuthContext'; // Import from AuthContext
 /**
  * ProfilePage Component
  * Displays the student's academic profile and preferences fetched via the CRM service.
@@ -9,16 +10,28 @@ const ProfilePage = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [saving, setSaving] = useState(false);
 
-  // Retrieve user_id from localStorage (synchronized with AuthPage)
-  const userId = localStorage.getItem('user_email') || 'anonymous';
+  const { isAuthenticated, userId, token } = useAuth(); // Lấy isAuthenticated, userId và token từ AuthContext
+
+  // State cho các trường thông tin mới
+  const [fullName, setFullName] = useState('');
+  const [dob, setDob] = useState('');
+  const [phone, setPhone] = useState('');
+
+  const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-        const response = await axios.get(`${baseUrl}/api/profile/${userId}`);
-        setProfile(response.data);
+        const response = await api.get(`/api/profile/${userId}`);
+        
+        // Khởi tạo giá trị cho form nếu có dữ liệu từ backend
+        if (response.data) {
+          setFullName(response.data.full_name || localStorage.getItem('user_name') || '');
+          setDob(response.data.dob || '');
+          setPhone(response.data.phone || '');
+        }
       } catch (err) {
         console.error("Error fetching profile:", err);
         setError("Không thể tải thông tin hồ sơ. Vui lòng hoàn thành khảo sát tư vấn trước.");
@@ -27,10 +40,34 @@ const ProfilePage = () => {
       }
     };
 
-    fetchProfile();
-  }, [userId]);
+    if (isAuthenticated && userId && userId !== 'anonymous') { // Chỉ fetch nếu đã xác thực và có user_id hợp lệ
+      fetchProfile();
+    } else if (!isAuthenticated || !userId) {
+      setError("Bạn cần đăng nhập để xem hồ sơ.");
+      setLoading(false);
+    }
+  }, [userId, token]); // Thêm token vào dependency array
 
-  if (loading) return <div className="p-8 text-center">Đang tải hồ sơ...</div>;
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await api.post(`/api/profile/${userId}`, {
+        full_name: fullName,
+        dob: dob,
+        phone: phone
+      });
+      alert("Lưu thông tin thành công!");
+      // Cập nhật lại tên hiển thị trong localStorage nếu cần
+      localStorage.setItem('user_name', fullName);
+    } catch (err) {
+      console.error("Error saving profile:", err);
+      alert("Lỗi khi lưu thông tin. Vui lòng thử lại.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) return <LoadingSpinner fullPage timeoutMessage="Hồ sơ đang được tải. Vui lòng đợi hoặc kiểm tra kết nối mạng." />;
   if (error) return <div className="p-8 text-red-500 text-center">{error}</div>;
 
   return (
@@ -42,6 +79,51 @@ const ProfilePage = () => {
 
       {profile ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Personal Information Form */}
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 md:col-span-2">
+            <h2 className="text-xl font-semibold mb-6 text-blue-700">Thông tin cá nhân</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-gray-500 uppercase">Họ và tên</label>
+                <input 
+                  type="text" 
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  placeholder="Nguyễn Văn A"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-gray-500 uppercase">Ngày sinh</label>
+                <input 
+                  type="date" 
+                  value={dob}
+                  onChange={(e) => setDob(e.target.value)}
+                  className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-gray-500 uppercase">Số điện thoại</label>
+                <input 
+                  type="tel" 
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  placeholder="09xx xxx xxx"
+                />
+              </div>
+              <div className="flex items-end">
+                <button 
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="w-full md:w-auto px-8 py-3 bg-blue-700 text-white font-bold rounded-lg hover:bg-blue-800 transition-all disabled:opacity-50"
+                >
+                  {saving ? "Đang lưu..." : "Lưu thay đổi"}
+                </button>
+              </div>
+            </div>
+          </div>
+
           {/* Academic Stats */}
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <h2 className="text-xl font-semibold mb-4 text-blue-700">Chỉ số học tập</h2>

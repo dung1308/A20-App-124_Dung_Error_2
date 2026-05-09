@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '../state/store';
 import { useNavigate } from 'react-router-dom';
 import { useChat } from '../hooks/useChat';
+import { useAuth } from '../context/AuthContext';
 
 const majorNameMap = {
   'cs': 'Khoa học Máy tính',
@@ -16,13 +17,20 @@ const majorNameMap = {
 };
 
 const ConsultantPage = () => {
-  const { matchResults, userId, setUserId } = useStore();
+  const { matchResults } = useStore();
+  const navigate = useNavigate();
+  const { userId, isAuthenticated } = useAuth(); // Moved up to ensure userId is available
+  const [currentSessionId, setCurrentSessionId] = useState('new');
+
   const { 
     messages, 
     setMessages, 
     sendMessage, 
     loading: isTyping 
-  } = useChat(userId, 'chat_history');
+  } = useChat(userId, currentSessionId, (newId) => {
+    // Transition from 'new' to a real session UUID once the first message is sent
+    if (currentSessionId === 'new') setCurrentSessionId(newId);
+  });
 
   const [input, setInput] = useState('');
   const [selectedMajor, setSelectedMajor] = useState(null);
@@ -42,13 +50,10 @@ const ConsultantPage = () => {
     }
   }, [matchResults, messages.length, setMessages]);
 
-  // Persist session if store is cleared on refresh
+  // Redirect to login if not authenticated
   useEffect(() => {
-    const savedEmail = localStorage.getItem('user_email');
-    if (!userId && savedEmail) {
-      setUserId(savedEmail);
-    }
-  }, [userId, setUserId]);
+    if (!isAuthenticated && !userId) navigate('/login');
+  }, [isAuthenticated, userId, navigate]);
 
   // Auto-scroll to bottom
   useEffect(() => {

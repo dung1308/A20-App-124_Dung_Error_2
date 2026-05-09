@@ -175,7 +175,7 @@ class AdvisorAgent:
         # TODO: Remove stub and implement Gemini call + validation
         return {"top3": [], "fallback": True}
 
-    def run(self, message: str, history: List[Dict[str, Any]], user_id: str = None) -> str:
+    def run(self, message: str, history: List[Dict[str, Any]], user_id: str = None, persona_summary: str = None) -> str:
         """
         Free-form advisor chat: personalized guidance on major choice.
         Called by Pipeline when router returns "advisor".
@@ -184,6 +184,7 @@ class AdvisorAgent:
             message: User question about which major to choose.
             history: Prior conversation turns for context.
             user_id: Student identifier for personalized context.
+            persona_summary: Natural language context about the student (from CV/Wizard).
 
         Returns:
             Guidance text in Vietnamese.
@@ -204,10 +205,15 @@ class AdvisorAgent:
             # TODO: 1. Build a chat prompt with MATCH_SYSTEM_PROMPT + last 3 history turns + message.
             hist_ctx = "\n".join([
                 f"{'Học sinh' if t.get('role')=='user' else 'Cố vấn'}: {t.get('content')}" 
-                for t in history[-3:] 
+                for t in history[-5:] 
                 if "role" in t and "content" in t
             ])
-            prompt = f"{MATCH_SYSTEM_PROMPT}\n\nLịch sử trò chuyện:\n{hist_ctx}\n\nCâu hỏi: {message}"
+            
+            persona_ctx = f"\n\nBối cảnh người dùng: {persona_summary}" if persona_summary else ""
+            
+            # run() expects a response that follows the MATCH_SYSTEM_PROMPT format (JSON) 
+            # so that the Pipeline can extract 'answer' and 'top3' if needed.
+            prompt = f"{MATCH_SYSTEM_PROMPT}{persona_ctx}\n\nLịch sử trò chuyện:\n{hist_ctx}\n\nCâu hỏi: {message}"
 
             # 2. Call self.llm.generate(prompt).
             if not self.llm: return "Hệ thống đang bận. Vui lòng thử lại sau."
@@ -257,13 +263,16 @@ class AdvisorAgent:
 
         cv_summary = ""
         if cv_signals:
-            evidence = cv_signals.evidence
-            suggested_list = cv_signals.suggested_majors
-            confidence = cv_signals.confidence
-
-            evidence_str = "\n- ".join(evidence) if evidence else "Không có thông tin cụ thể."
-            suggested = ", ".join(suggested_list)
-            cv_summary = f"\n\nTín hiệu từ CV (Dùng để tham khảo thêm):\n- Độ tin cậy (Confidence): {confidence:.2f}\n- Các ngành gợi ý từ CV: {suggested}\n- Minh chứng: {evidence_str}"
+            # Handle cv_signals as a dictionary returned by CVAgent.analyze()
+            persona = cv_signals.get("persona_summary", "Không có tóm tắt.")
+            skills = ", ".join(cv_signals.get("extracted_skills", []))
+            titles = ", ".join(cv_signals.get("extracted_job_titles", []))
+            suggested = ", ".join(cv_signals.get("suggested_majors", []))
+            
+            cv_summary = (
+                f"\n\nTín hiệu từ CV:\n- Tóm tắt: {persona}\n"
+                f"- Chức danh: {titles}\n- Kỹ năng: {skills}\n- Gợi ý sơ bộ: {suggested}"
+            )
 
         return f"{MATCH_SYSTEM_PROMPT}\n\nDưới đây là thông tin của học sinh:\n{user_summary}{cv_summary}"
 

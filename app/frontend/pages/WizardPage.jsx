@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../state/store';
-import { api } from '../services/api';
+import api from '../services/api';
+import { useAuth } from '../context/AuthContext'; // Import useAuth
 import Step1 from '../components/Wizard/Step1';
 import Step2 from '../components/Wizard/Step2';
 import Step3 from '../components/Wizard/Step3';
@@ -11,7 +12,8 @@ import CVUpload from '../components/CVUpload/CVUpload';
 const WizardPage = () => {
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
-  const { userId, setUserId, wizardData, setWizardData, setMatchResults, cvText, cvSignals } = useStore();
+  const { wizardData, setWizardData, setMatchResults, cvText, cvSignals, setCVData } = useStore(); 
+  const { userId, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   const stepsMap = {
@@ -19,7 +21,70 @@ const WizardPage = () => {
       <div className="step-container">
         <h2 className="text-2xl font-black text-blue-900 mb-4">Chào mừng bạn!</h2>
         <p className="text-slate-600 mb-8">Để bắt đầu, bạn có thể tải lên CV để AI hiểu rõ hơn về năng lực và kinh nghiệm của bạn.</p>
-        <CVUpload />
+        <CVUpload onUploadSuccess={(data) => setCVData(data.cv_text, data.cv_signals)} />
+        
+        {/* Visual feedback for extracted CV signals */}
+        {(cvSignals?.extracted_skills?.length > 0 || cvSignals?.extracted_job_titles?.length > 0) && (
+          <div className="mt-6 p-6 bg-blue-50/30 rounded-2xl border border-blue-100 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="material-symbols-outlined text-blue-600">analytics</span>
+              <h3 className="text-sm font-black text-blue-900 uppercase tracking-tight">Kết quả phân tích CV</h3>
+            </div>
+            
+            {cvSignals?.persona_summary && (
+              <div className="mb-6 p-4 bg-white rounded-xl border border-blue-50 shadow-sm">
+                <p className="text-sm text-slate-700 leading-relaxed italic">"{cvSignals.persona_summary}"</p>
+              </div>
+            )}
+            
+            {cvSignals?.extracted_job_titles?.length > 0 && (
+              <div className="mb-4">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Kinh nghiệm chuyên môn</p>
+                <div className="flex flex-wrap gap-2">
+                  {cvSignals.extracted_job_titles.map((title, i) => (
+                    <span key={i} className="px-3 py-1 bg-blue-900 text-white text-[11px] font-bold rounded-lg shadow-sm">
+                      {title}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {cvSignals?.extracted_skills?.length > 0 && (
+              <div className={cvSignals?.suggested_majors?.length > 0 ? "mb-4" : ""}>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Kỹ năng nổi bật</p>
+                <div className="flex flex-wrap gap-2">
+                  {cvSignals.extracted_skills.map((skill, i) => (
+                    <span key={i} className="px-3 py-1 bg-blue-50 text-blue-700 text-[11px] font-bold rounded-lg border border-blue-100">
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {cvSignals?.suggested_majors?.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-slate-50">
+                <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-2 italic">Gợi ý ban đầu từ AI</p>
+                <p className="text-xs text-slate-600 font-medium leading-relaxed flex flex-wrap items-center gap-x-1">
+                  Dựa trên hồ sơ, bạn có tiềm năng cao ở: 
+                  {cvSignals.suggested_majors.map((major, i) => (
+                    <span 
+                      key={i} 
+                      className="group relative inline-block cursor-help border-b border-dotted border-blue-400 text-blue-900 font-bold"
+                    >
+                      {major}{i < cvSignals.suggested_majors.length - 1 ? "," : ""}
+                      <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-slate-800 text-white text-[10px] font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-xl">
+                        {cvSignals.major_explanations?.[major] || "Gợi ý dựa trên phân tích hồ sơ."}
+                        <span className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-slate-800"></span>
+                      </span>
+                    </span>
+                  ))}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     ),
     1: <Step1 data={wizardData.interests} onUpdate={setWizardData} />,
@@ -28,13 +93,10 @@ const WizardPage = () => {
     4: <Step4 data={wizardData.work_style} onUpdate={setWizardData} />,
   };
 
-  // Persist session if store is cleared on refresh
+  // Redirect to login if not authenticated or userId is missing
   useEffect(() => {
-    const savedEmail = localStorage.getItem('user_email');
-    if (!userId && savedEmail) {
-      setUserId(savedEmail);
-    }
-  }, [userId, setUserId]);
+    if (!isAuthenticated || !userId) navigate('/login');
+  }, [isAuthenticated, userId, navigate]);
 
   /**
    * Basic validation to ensure the student has selected 
@@ -74,13 +136,13 @@ const WizardPage = () => {
     setLoading(true);
     try {
       // Calls the /api/match endpoint to get structured Top 3 recommendations
-      const result = await api.postMatch({ 
+      const data = await api.runMatch({
         user_id: userId, 
         answers: wizardData, 
         cv_text: cvText,
         cv_signals: cvSignals 
       });
-      setMatchResults(result);
+      setMatchResults(data);
       const email = userId || localStorage.getItem('user_email');
       if (email) {
         localStorage.setItem(`wizard_completed_${email}`, 'true');

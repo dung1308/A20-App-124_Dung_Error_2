@@ -1,82 +1,96 @@
 import { useState, useCallback, useEffect } from 'react';
-import { api } from '../services/api';
+import api from '../services/api';
+import { useStore } from '../state/store';
 
-/**
- * useChat Hook
- * Manages chat state and API synchronization for the AI Mentor.
- * 
- * @param {string} userId - The identifier for the current student.
- * @param {string} storageKey - Optional key to persist messages in localStorage.
- * @returns {Object} { messages, setMessages, sendMessage, clearChat, loading }
- */
-export const useChat = (userId, storageKey = null) => {
-  const [messages, setMessages] = useState(() => {
-    if (storageKey) {
-      const saved = localStorage.getItem(storageKey);
-      return saved ? JSON.parse(saved) : [];
-    }
-    return [];
-  });
+export const useChat = (userId, sessionId, onSessionUpdate) => {
+  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [abortController, setAbortController] = useState(null);
 
-  // Persist to localStorage if key provided
+  // Retrieve CV signals from the global store to provide context to the LLM
+  const { cvSignals } = useStore();
+
+  // Load history when session changes or on mount
   useEffect(() => {
-    if (storageKey) {
-      localStorage.setItem(storageKey, JSON.stringify(messages));
-    }
-  }, [messages, storageKey]);
+    const loadHistory = async () => {
+      if (!sessionId || sessionId === 'new') {
+        setMessages([]);
+        return;
+      }
+      try {
+        const res = await api.getSessionMessages(sessionId);
+        if (res.status === 'success') {
+          setMessages(res.messages);
+        }
+      } catch (err) {
+        console.error("Failed to load history:", err);
+      }
+    };
+    loadHistory();
+  }, [sessionId]);
 
   const sendMessage = useCallback(async (text) => {
-    if (!text.trim() || loading) return;
+    if (!text.trim()) return;
 
-    // 1. Update UI with user message immediately
-    const userMsg = { role: 'user', content: text };
-    setMessages((prev) => [...prev, userMsg]);
+    const userMsg = { 
+      role: 'user', 
+      content: text, 
+      timestamp: new Date().toISOString() 
+    };
+    
+    setMessages(prev => [...prev, userMsg]);
     setLoading(true);
 
-    try {
-      // 2. Format history for the LLM context (role and content only)
-      // Filter out meta-fields (like 'type' or 'data') not recognized by the backend schema
-      const history = messages
-        .filter(m => m.role === 'user' || m.role === 'assistant')
-        .map(m => ({
-          role: String(m.role),
-          content: String(m.content || "")
-        }));
+    const controller = new AbortController();
+    setAbortController(controller);
 
-      // 3. Dispatch to backend using the aliased ChatRequest schema
+    try {
       const payload = {
-        userId: userId || "anonymous",
-        text: text,
-        history: history
+        userId,
+        sessionId,
+        text,
+        history: messages.map(m => ({ role: m.role, content: m.content })),
+        persona_summary: cvSignals?.persona_summary
       };
 
-      const response = await api.postChat(payload);
+      const res = await api.postChat(payload, { signal: controller.signal });
 
-      // 4. Update UI with assistant response and metadata
-      if (response && response.response) {
-        const assistantMsg = { 
-          role: 'assistant', 
-          content: response.response,
-          type: response.major ? 'recommendation' : null,
-          data: response.major || null
-        };
-        setMessages((prev) => [...prev, assistantMsg]);
+      // MAPPING: Ensure the 'answer' field from the backend JSON is mapped to the 'content' property
+      const assistantMsg = {
+        role: 'assistant',
+        content: res.answer || res.response || "Xin lỗi, tôi không nhận được phản hồi.",
+        data: res.top3 || [],
+        type: (res.top3 && res.top3.length > 0) ? 'recommendation' : 'text',
+        fallback: res.fallback || false,
+        timestamp: new Date().toISOString()
+      };
+
+      setMessages(prev => [...prev, assistantMsg]);
+
+      // Handle session handoff/updates if the backend provides a new session ID
+      if (res.session_id && res.session_id !== sessionId && onSessionUpdate) {
+        onSessionUpdate(res.session_id);
       }
-    } catch (error) {
-      console.error("useChat Error:", error);
-      setMessages((prev) => [...prev, { role: 'assistant', content: "Xin lỗi, tôi gặp trục trặc khi kết nối. Bạn có thể thử lại sau nhé." }]);
+    } catch (err) {
+      if (err.name !== 'CanceledError') {
+        console.error("Chat Error:", err);
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: "Lỗi kết nối máy chủ. Vui lòng thử lại sau.",
+          timestamp: new Date().toISOString()
+        }]);
+      }
     } finally {
       setLoading(false);
+      setAbortController(null);
     }
-  }, [userId, messages, loading]);
+  }, [userId, sessionId, messages, onSessionUpdate]);
 
-  const clearChat = useCallback(() => {
-    setMessages([]);
-    if (storageKey) {
-      localStorage.removeItem(storageKey);
+  const stopGenerating = () => {
+    if (abortController) {
+      abortController.abort();
     }
-  }, [storageKey]);
+  };
 
-  return { messages, setMessages, sendMessage, clearChat, loading };
+  return { messages, setMessages, sendMessage, stopGenerating, loading };
 };

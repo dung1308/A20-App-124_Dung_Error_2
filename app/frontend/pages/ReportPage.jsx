@@ -2,22 +2,30 @@ import React, { useState } from 'react';
 import { useStore } from '../state/store';
 import { Link } from 'react-router-dom';
 import MajorCard from '../components/Report/MajorCard';
-import ChatBox from '../components/Chat/ChatBox';
+import LoadingSpinner from '../components/LoadingSpinner';
+import { useAuth } from '../context/AuthContext'; // Import useAuth
+import ChatBox from '../components/Chat/ChatBox'; // Assuming ChatBox also needs userId
 
 const ReportPage = () => {
-  const { matchResults, userId } = useStore();
+  const { matchResults } = useStore();
+  const { userId, isAuthenticated } = useAuth(); // Get userId and isAuthenticated from AuthContext
   const [showChat, setShowChat] = useState(false);
 
   if (!matchResults) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-8">
         <div className="text-center p-8 h-full overflow-y-auto">
-          <div className="w-12 h-12 border-4 border-blue-900 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <LoadingSpinner size="lg" className="mb-4" timeoutMessage="Kết quả phân tích đang được tạo. Quá trình này có thể mất vài phút." />
           <p className="text-slate-600 font-medium">Đang tải kết quả phân tích...</p>
           <Link to="/wizard" className="text-blue-700 text-sm mt-4 inline-block underline">Quay lại khảo sát</Link>
         </div>
       </div>
     );
+  }
+
+  // Redirect to login if not authenticated
+  if (!isAuthenticated || !userId) {
+    return <div className="p-8 text-red-500 text-center">Bạn cần đăng nhập để xem báo cáo.</div>;
   }
 
   return (

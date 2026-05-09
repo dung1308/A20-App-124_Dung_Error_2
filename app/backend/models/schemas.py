@@ -10,6 +10,9 @@ class User(Base):
     user_id = Column(String, primary_key=True)
     email = Column(String, unique=True, nullable=True)
     full_name = Column(String, nullable=True)
+    hashed_password = Column(String, nullable=True)
+    role = Column(String, default="user")
+    permissions = Column(JSON, nullable=True)  # Custom permission overrides
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -19,6 +22,14 @@ class Major(Base):
     id = Column(String, primary_key=True)  # e.g., 'cs', 'ee', 'ba'
     name = Column(String, nullable=False)
     description = Column(Text, nullable=True)  # Details on what students do/learn
+
+class AdmissionsData(Base):
+    """Stores specific admission requirements for majors."""
+    __tablename__ = "admissions_data"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    major_id = Column(String, ForeignKey("majors.id"), nullable=False)
+    requirements = Column(Text, nullable=True)
+    description = Column(Text, nullable=True)
 
 class ChatMessage(Base):
     """Stores individual chat messages in the conversation history."""
@@ -35,6 +46,7 @@ class ChatSession(Base):
     """Groups related chat messages into sessions."""
     __tablename__ = "chat_sessions"
     id = Column(String, primary_key=True)
+    title = Column(String, nullable=True)
     user_id = Column(String, ForeignKey("users.user_id"), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     ended_at = Column(DateTime, nullable=True)

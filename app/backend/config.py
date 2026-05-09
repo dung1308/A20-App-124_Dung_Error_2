@@ -23,10 +23,7 @@ logger = logging.getLogger(__name__)
 OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
 OPENAI_MODEL: str = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
-
-DATABASE_URL: str = os.getenv(
-    "DATABASE_URL", "sqlite:///./vinuni_match.db"  # SQLite fallback for dev
-)
+DATABASE_URL: str = os.getenv("DATABASE_URL", "") # Initialize as empty string, actual value from get_database_url
 USE_MOCK: bool = os.getenv("USE_MOCK", "True").lower() == "true"
 REDIS_URL: str | None = os.getenv("REDIS_URL")
 HUMAN_WEBHOOK: str = os.getenv("HUMAN_WEBHOOK", "http://localhost:9000/handoff")
@@ -36,6 +33,11 @@ LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
 RATE_LIMIT_MAX_REQUESTS: int = int(os.getenv("RATE_LIMIT_MAX_REQUESTS", "10"))
 RATE_LIMIT_WINDOW_SECONDS: int = int(os.getenv("RATE_LIMIT_WINDOW_SECONDS", "60"))
 DAILY_LLM_BUDGET: float = float(os.getenv("DAILY_LLM_BUDGET", "100"))
+
+# Security settings
+SECRET_KEY: str = os.getenv("SECRET_KEY", "your-super-secret-key-change-in-production")
+ALGORITHM: str = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24 hours
 
 if not OPENAI_API_KEY and not USE_MOCK:
     logger.warning("OPENAI_API_KEY not set — LLM calls will fail at runtime.")
@@ -91,12 +93,15 @@ class MockGenerativeModel:
 
 def get_database_url() -> str:
     """
-    Return the database URL from environment.
-    Falls back to SQLite for local development if DATABASE_URL is unset.
-
-    TODO: Validate URL format before returning.
+    Return the current database URL from environment variables.
+    Always reads from os.getenv to ensure the most recent value is retrieved.
     """
-    return DATABASE_URL
+    url = os.getenv("DATABASE_URL", "sqlite:///./vinuni_match.db") # Direct fallback here
+    
+    if not USE_MOCK and url.startswith("sqlite"):
+        logger.warning("Application is NOT in MOCK mode but is falling back to SQLite. Check your .env file.")
+        
+    return url
 
 def embed_text(text: str):
     if USE_MOCK:

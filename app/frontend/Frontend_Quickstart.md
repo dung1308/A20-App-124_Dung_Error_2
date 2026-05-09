@@ -26,6 +26,8 @@ Create a `.env` file in the `frontend/` directory. This ensures the frontend kno
 
 ```env
 VITE_API_URL=http://localhost:8000
+VITE_GOOGLE_CLIENT_ID=your_google_client_id_here.apps.googleusercontent.com
+# LƯU Ý: Nếu thiếu VITE_GOOGLE_CLIENT_ID, tính năng Đăng nhập Google sẽ bị lỗi
 ```
 
 ## 4. Running the Application

@@ -9,11 +9,24 @@ const SignupPage = ({ onSignupSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     try {
       await signup(fullName, email, password);
       onSignupSuccess();
     } catch (err) {
-      setError('Đăng ký không thành công. Vui lòng thử lại.');
+      // Extract specific error messages from the backend response
+      if (err.response?.data?.detail) {
+        const detail = err.response.data.detail;
+        if (Array.isArray(detail)) {
+          // Join multiple validation error messages (like password requirements)
+          setError(detail.map(d => d.msg).join(' '));
+        } else {
+          // Handle single string detail (like "Email already registered")
+          setError(detail);
+        }
+      } else {
+        setError('Đăng ký không thành công. Vui lòng thử lại.');
+      }
     }
   };
 
@@ -46,6 +59,43 @@ const SignupPage = ({ onSignupSuccess }) => {
     fontWeight: '600'
   };
 
+  const bubbleStyle = {
+    fontSize: '12px',
+    color: '#d93025',
+    backgroundColor: '#fff',
+    padding: '8px 12px',
+    borderRadius: '4px',
+    border: '1px solid #d93025',
+    marginTop: '8px',
+    marginBottom: '16px',
+    lineHeight: '1.4',
+    display: 'flex',
+    gap: '8px',
+    alignItems: 'center',
+    position: 'relative',
+    boxShadow: '0 1px 2px rgba(60,64,67,0.3)'
+  };
+
+  const triangleStyle = {
+    position: 'absolute',
+    top: '-6px',
+    left: '12px',
+    width: '0',
+    height: '0',
+    borderLeft: '6px solid transparent',
+    borderRight: '6px solid transparent',
+    borderBottom: '6px solid #d93025'
+  };
+
+  const triangleInnerStyle = {
+    position: 'absolute',
+    top: '1px',
+    left: '-6px',
+    borderLeft: '6px solid transparent',
+    borderRight: '6px solid transparent',
+    borderBottom: '6px solid #fff'
+  };
+
   return (
     <div style={containerStyle}>
       <h2 style={{ marginBottom: '24px', textAlign: 'center' }}>Đăng ký tài khoản</h2>
@@ -57,8 +107,28 @@ const SignupPage = ({ onSignupSuccess }) => {
         <label style={{ display: 'block', marginBottom: '8px', color: '#6b7280' }}>Email</label>
         <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={inputStyle} required />
         
-        <label style={{ display: 'block', marginBottom: '8px', color: '#6b7280' }}>Mật khẩu</label>
-        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} style={inputStyle} required />
+        <label style={{ display: 'block', marginBottom: '8px', color: error ? '#d93025' : '#6b7280' }}>Mật khẩu</label>
+        <input 
+          type="password" 
+          value={password} 
+          onChange={(e) => setPassword(e.target.value)} 
+          style={{
+            ...inputStyle, 
+            borderColor: error ? '#d93025' : '#e5e7eb', 
+            marginBottom: error ? '4px' : '16px'
+          }} 
+          required 
+        />
+
+        {error && (
+          <div style={{ position: 'relative' }}>
+            <div style={triangleStyle}><div style={triangleInnerStyle}></div></div>
+            <div style={bubbleStyle}>
+              <span className="material-symbols-outlined" style={{ fontSize: '18px', color: '#d93025' }}>error</span>
+              <p style={{ margin: 0 }}>Mật khẩu cần ít nhất 8 ký tự, bao gồm chữ cái in hoa, chữ thường, chữ số và ký tự đặc biệt (VD: !@#$).</p>
+            </div>
+          </div>
+        )}
         
         <button type="submit" style={buttonStyle}>Đăng ký</button>
       </form>

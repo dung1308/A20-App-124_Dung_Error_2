@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useStore } from '../../state/store';
-import { api } from '../../services/api';
+import api from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 
 const CVUpload = () => {
-  const { userId, setCVSignals, setCVText, cvSignals } = useStore();
+  const { setCVSignals, setCVText, cvSignals } = useStore();
+  const { userId } = useAuth();
   const [file, setFile] = useState(null);
   const [status, setStatus] = useState('idle'); // idle | uploading | success | error
   const [errorMsg, setErrorMsg] = useState('');
@@ -27,9 +29,16 @@ const CVUpload = () => {
     if (!file) return;
     
     setStatus('uploading');
+    const formData = new FormData();
+    formData.append('file', file);
+
     try {
-      const signals = await api.uploadCV(userId, file);
-      setCVSignals(signals);
+      const response = await api.post(`/api/upload-cv?user_id=${userId}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      setCVSignals(response.data);
       setStatus('success');
     } catch (error) {
       console.error("CV Upload failed:", error);

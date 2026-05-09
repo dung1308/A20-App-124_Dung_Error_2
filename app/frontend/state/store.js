@@ -1,31 +1,35 @@
 import { create } from 'zustand';
 
-const initialState = {
+export const useStore = create((set) => ({
+  // State for Wizard Data
   wizardData: {
     interests: [],
     strengths: [],
     dislikes: [],
-    work_style: ''
+    work_style: '',
   },
-  cvText: '',
-  matchResults: null,
-};
-
-export const useStore = create((set) => ({
-  userId: localStorage.getItem('user_email') || `user_${Math.random().toString(36).substr(2, 9)}`,
-  role: localStorage.getItem('user_role') || 'user',
-  ...initialState,
-  
-  setUserId: (id) => set({ userId: id }),
-  setRole: (role) => set({ role }),
   setWizardData: (data) => set((state) => ({ 
     wizardData: { ...state.wizardData, ...data } 
   })),
-  setCVText: (text) => set({ cvText: text }),
-  setMatchResults: (results) => set({ matchResults: results }),
+
+  // State for CV Data
+  cvText: '',
+  cvSignals: null,
   
+  // Individual setters to support granular updates from components
+  setCVText: (text) => set({ cvText: text }),
+  setCVSignals: (signals) => set({ cvSignals: signals }),
+
   /**
-   * Resets the wizard progress while keeping the same userId
+   * Action to update CV data after successful upload.
+   * Maps directly to the response from /api/upload-cv
    */
-  resetWizard: () => set((state) => ({ ...initialState }))
+  setCVData: (text, signals) => set({ 
+    cvText: text, 
+    cvSignals: signals 
+  }),
+
+  // State for Recommendations
+  matchResults: null,
+  setMatchResults: (results) => set({ matchResults: results }),
 }));

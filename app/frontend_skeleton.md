@@ -2,6 +2,7 @@ frontend/
   pages/
     WizardPage.jsx
     ReportPage.jsx
+    AdminDashboard.jsx (Visualize PMF metrics and handoff summaries)
   components/
     Wizard/
       Step1.jsx
@@ -13,7 +14,7 @@ frontend/
     Chat/
       ChatBox.jsx
   services/
-    api.js
+    api.js (Auth, Chat, Match, Metrics, and Handoff endpoints)
   hooks/
     useChat.js
   state/

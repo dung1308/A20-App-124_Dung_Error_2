@@ -69,13 +69,13 @@ uvicorn main:app --reload
 psql -U postgres
 
 # Create database and user
-CREATE DATABASE vinuni_backend;
-CREATE USER vinuni_user WITH PASSWORD 'secure_password_here';
-ALTER ROLE vinuni_user SET client_encoding TO 'utf8';
-ALTER ROLE vinuni_user SET default_transaction_isolation TO 'read committed';
-ALTER ROLE vinuni_user SET default_transaction_deferrable TO on;
-ALTER ROLE vinuni_user SET default_transaction_read_only TO off;
-GRANT ALL PRIVILEGES ON DATABASE vinuni_backend TO vinuni_user;
+CREATE DATABASE vinuni_db;
+CREATE USER vinuni_user2 WITH PASSWORD 'your pass';
+ALTER ROLE vinuni_user2 SET client_encoding TO 'utf8';
+ALTER ROLE vinuni_user2 SET default_transaction_isolation TO 'read committed';
+ALTER ROLE vinuni_user2 SET default_transaction_deferrable TO on;
+ALTER ROLE vinuni_user2 SET default_transaction_read_only TO off;
+GRANT ALL PRIVILEGES ON DATABASE vinuni_db TO vinuni_user2;
 \q
 ```
 
@@ -84,9 +84,9 @@ GRANT ALL PRIVILEGES ON DATABASE vinuni_backend TO vinuni_user;
 Create `.env` in `backend/`:
 
 ```env
-DATABASE_URL=postgresql://vinuni_user:secure_password_here@localhost:5432/vinuni_backend
+DATABASE_URL=postgresql://vinuni_user2:13082001@localhost:5432/vinuni_db
 USE_MOCK=False
-GEMINI_API_KEY=your_api_key_here
+OPENAI_API_KEY=your_api_key_here
 LOG_LEVEL=INFO
 ```
 
