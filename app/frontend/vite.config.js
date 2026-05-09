@@ -5,9 +5,14 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
+    host: true, // Expose to local network
     proxy: {
-      '/api': 'http://localhost:8000',
-      '/chat': 'http://localhost:8000'
-    }
-  }
+      // Proxies /api requests to the backend server
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 })
