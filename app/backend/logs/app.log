@@ -3341,3 +3341,24 @@ DETAIL:  Key (user_id)=([EMAIL]) is not present in table "users".
 2026-05-09 12:28:45 [-] services.db_service INFO — DBService initialised for PostgreSQL (SessionLocal accessed dynamically)
 2026-05-09 12:28:46 [-] services.db_service INFO — DBService initialised for PostgreSQL (SessionLocal accessed dynamically)
 2026-05-09 12:28:46 [-] main INFO — Database initialized on startup
+2026-05-09 12:32:09 [-] services.db_service INFO — DBService initialised for PostgreSQL (SessionLocal accessed dynamically)
+2026-05-09 12:32:09 [-] services.rag_service INFO — Initializing RAGService
+2026-05-09 12:32:10 [-] services.rag_service INFO — Re-ingesting all data...
+2026-05-09 12:32:10 [-] services.rag_service INFO — Ingested 0 admission chunks
+2026-05-09 12:32:10 [-] services.rag_service INFO — Ingested 0 FAQ items
+2026-05-09 12:32:11 [-] services.db_service INFO — DBService initialised for PostgreSQL (SessionLocal accessed dynamically)
+2026-05-09 12:32:11 [-] services.db_service INFO — DBService initialised for PostgreSQL (SessionLocal accessed dynamically)
+2026-05-09 12:32:12 [-] main INFO — Database initialized on startup
+2026-05-09 12:38:58 [-] orchestrator.pipeline INFO — run_chat for user: [EMAIL], session: f4d58a00-a1bd-45f2-bcf5-b154df6e7eb9
+2026-05-09 12:38:58 [-] orchestrator.pipeline INFO — Pipeline operating in REAL mode
+2026-05-09 12:38:58 [-] orchestrator.router INFO — Routing message: 'Triển vọng nghề nghiệp...'
+2026-05-09 12:39:01 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 2.58s
+2026-05-09 12:39:01 [-] orchestrator.router INFO — [LLM] Routed to: advisor
+2026-05-09 12:39:01 [-] agents.advisor INFO — AdvisorAgent.run() called
+2026-05-09 12:39:07 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 6.31s
+2026-05-09 12:39:07 [-] agents.judge INFO — JudgeAgent.evaluate() called
+2026-05-09 12:39:09 [-] services.llm_client INFO — LLM latency (gpt-4o-mini): 1.78s
+2026-05-09 12:39:09 [-] agents.judge INFO — Judge Result: pass=True, score=95, reason=The response is relevant to the user's inquiry about career prospects, provides helpful suggestions related to technology-related fields, and is appropriate for a Vietnamese high school student. It does not contain harmful content, fabricated information, or personal data leaks.
+2026-05-09 12:39:09 [-] agents.advisor INFO — Using hardcoded VINUNI_MAJORS_LOOKUP (Mock/Fallback)
+2026-05-09 12:39:09 [-] orchestrator.pipeline INFO — AUDIT [[EMAIL]] route=advisor pass=True latency=10770ms
+2026-05-09 12:39:09 [-] services.db_service ERROR — Failed to save audit log: 'input_text' is an invalid keyword argument for AuditLog

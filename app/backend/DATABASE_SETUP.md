@@ -105,7 +105,7 @@ python db_init.py
 sqlite3 vinuni_match.db ".schema"
 
 # Or for PostgreSQL
-psql -U vinuni_user -d vinuni_backend -c "\d"
+psql -U vinuni_user -d vinuni_db -c "\d"
 ```
 
 ### Recreate Database (Development Only)
